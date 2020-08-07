@@ -1,22 +1,31 @@
 import { bot } from '../bot';
 import Log from '../utils/log';
-
+import { promisify } from 'util';
 import EventHandler from './handlers/event-handler';
-import ReadyHandler from './handlers/ready.handler';
-import GuildMemberAddHandler from './handlers/guild-member-add.handler';
-import GuildMemberRemoveHandler from './handlers/guild-member-remove.handler';
+import fs from 'fs';
+
+const readdir = promisify(fs.readdir);
 
 export default class EventsService {
-    private readonly handlers: EventHandler[] = [
-        new ReadyHandler(),
-        new GuildMemberAddHandler(),
-        new GuildMemberRemoveHandler()
-    ];
+    private readonly handlers: EventHandler[] = [];
 
-    constructor() {
-        for (const handler of this.handlers)
-            bot.on(handler.on, handler.invoke.bind(handler));
+    async init() {
+        const handlerFiles = await readdir(`${__dirname}/handlers`);
         
+        for (const file of handlerFiles) {            
+            const Handler = await require(`./handlers/${file}`).default;
+            const handler = Handler && new Handler();
+            if (!handler?.on) continue;
+
+            this.handlers.push(new Handler());
+        }
+        this.hookEvents();
+    }
+
+    private hookEvents() {
+        for (const handler of this.handlers)
+            bot.on(handler.on as any, handler.invoke.bind(handler));
+
         Log.info(`Loaded: ${this.handlers.length} handlers`, 'events');
     }
 }

@@ -1,6 +1,6 @@
 import rateLimit from 'express-rate-limit';
 import rateLimitStore from '@lykmapipo/rate-limit-mongoose';
-import config from '../../config.json';
+import config from '../../../config.json';
 
 const windowMs = 1 * 60 * 1000;
 export default rateLimit({

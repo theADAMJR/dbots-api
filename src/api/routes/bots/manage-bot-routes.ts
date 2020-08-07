@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import config from '../../../config.json';
+import config from '../../../../config.json';
 import { bot } from '../../../bot';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import Deps from '../../../utils/deps';

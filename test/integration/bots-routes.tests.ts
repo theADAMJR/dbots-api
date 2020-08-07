@@ -1,9 +1,9 @@
-import config from '../../../../config.json';
-import Deps from '../../../../src/utils/deps';
-import Bots from '../../../../src/data/bots';
-import { API, app } from '../../../../src/api/server';
+import config from '../../config.json';
+import Deps from '../../src/utils/deps';
+import Bots from '../../src/data/bots';
+import { API, app } from '../../src/api/server';
 import request from 'supertest';
-import { Listing } from '../../../../src/data/models/bot';
+import { Listing } from '../../src/data/models/bot';
 
 describe('routes/api/bots', () => {
     let body: Listing;

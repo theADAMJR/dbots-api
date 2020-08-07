@@ -1,5 +1,5 @@
-import AuditLogger from "../../../../src/api/modules/audit-logger";
-import { expect } from "chai";
+import AuditLogger from '../../src/api/modules/audit-logger';
+import { expect } from 'chai';
 
 describe('api/modules/audit-logger', () => {
     it('no changes, empty array returned', () => {
@@ -9,7 +9,7 @@ describe('api/modules/audit-logger', () => {
         };
 
         const expected = { old: {}, new: {} };
-        const result = AuditLogger.getChanges(values, 'a', '123').changes;
+        const result = AuditLogger.getChanges(values, '123').changes;
 
         expect(result).to.deep.equal(expected);
     });
@@ -24,7 +24,7 @@ describe('api/modules/audit-logger', () => {
             old: { a: 'a' },
             new: { a: 'b' }
         };
-        const result = AuditLogger.getChanges(values, 'a', '123').changes;
+        const result = AuditLogger.getChanges(values, '123').changes;
 
         expect(result).to.deep.equal(expected);
     });
@@ -44,7 +44,7 @@ describe('api/modules/audit-logger', () => {
         };
 
         const expected = values;
-        const result = AuditLogger.getChanges(values, 'a', '123').changes;
+        const result = AuditLogger.getChanges(values, '123').changes;
 
         expect(result).to.deep.equal(expected);
     });

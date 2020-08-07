@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { API, app } from '../../../../src/api/server';
-import Deps from '../../../../src/utils/deps';
+import { API, app } from '../../src/api/server';
+import Deps from '../../src/utils/deps';
 
 describe('routes/api', () => {
     beforeEach(() => Deps.get<API>(API));

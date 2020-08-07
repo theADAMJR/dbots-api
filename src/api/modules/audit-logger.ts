@@ -1,4 +1,4 @@
-import {  Change } from "../../data/models/log";
+import {  Change } from '../../data/models/log';
 
 export default class AuditLogger {
     static getChanges(values: { old: {}, new: {} }, by: string) {

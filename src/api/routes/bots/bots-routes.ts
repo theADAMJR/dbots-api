@@ -8,7 +8,7 @@ import { sendError } from '../../modules/api-utils';
 import { SavedBot } from '../../../data/models/bot';
 import Users from '../../../data/users';
 import { sendLog } from './manage-bot-routes';
-import config from '../../../config.json';
+import config from '../../../../config.json';
 import { UserDocument } from '../../../data/models/user';
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 

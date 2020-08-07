@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember } from 'discord.js';
 
 export default class CommandUtils {
     static getMemberFromMention(mention: string, guild: any): GuildMember {    
