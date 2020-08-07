@@ -20,4 +20,4 @@ mongoose.connect(config.mongoURL, {
     useFindAndModify: false 
 }, (error) => error
     ? Log.error('Failed to connect to db', 'bot')
-    : Log.info('Connected to db', 'bot')););
+    : Log.info('Connected to db', 'bot'));
