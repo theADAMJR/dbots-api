@@ -33,7 +33,7 @@ const botSchema = new Schema({
     listing: Object,
     ownerId: String,
     stats: { guildCount: Number },
-    totalVotes: Number,
+    totalVotes: { type: Number, default: 0 },
     lastVoteAt: Date,
     votes: { type: Array, default: [] }
 });

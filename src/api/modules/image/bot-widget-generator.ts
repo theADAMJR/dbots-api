@@ -73,8 +73,8 @@ export class BotWidgetGenerator extends ImageGenerator {
     async addStats(ctx: CanvasRenderingContext2D, canvas: Canvas, offset: Vector2D = { x: 0, y: 0 }) {
         const pos = { x: offset.x, y: canvas.height / 3.25 + offset.y };
         
-        const serversImage = await loadImage(`${__dirname}/server.png`);
-        const votesImage = await loadImage(`${__dirname}/chevron-circle-up.png`);
+        const serversImage = await loadImage(`assets/img/server.png`);
+        const votesImage = await loadImage(`assets/img/chevron-circle-up.png`);
         const nativeSize = { w: 128, h: 128 };
 
         ctx.drawImage(votesImage, pos.x + 25, pos.y,
@@ -104,7 +104,7 @@ export class BotWidgetGenerator extends ImageGenerator {
         ctx.fillStyle = this.colors.bgSecondary;
         ctx.fillRect(0, pos.y - 5, canvas.width, canvas.height);
 
-        const avatar = await loadImage('api/modules/image/logo.png');
+        const avatar = await loadImage('assets/img/logo.png');
 
         const nativeSize = { w: 231, h: 46 };
         

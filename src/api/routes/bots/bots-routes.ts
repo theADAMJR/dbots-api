@@ -94,6 +94,7 @@ router.get('/:id/vote', async (req, res) => {
 
         const savedBot = await bots.get(id);
         savedBot.votes.push(vote);
+        savedBot.totalVotes++;
         savedBot.lastVoteAt = new Date();
         await savedBot.save();
 
