@@ -105,11 +105,14 @@ router.get('/:id/vote', async (req, res) => {
 
 async function postVoteWebhook(id: string, vote: any) {
     const savedToken = await botTokens.get(id);
+    try {
+
         await fetch(savedToken.voteWebhookURL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(vote)
         });
+    } catch {}
 }
 
 router.get('/:id/saved', async (req, res) => {

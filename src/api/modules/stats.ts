@@ -37,7 +37,7 @@ export default class Stats {
       .fill(new Date())
       .map((today, i) => new Date(today - 8.64e7 * i))
       .map(date => ({
-        day: `${date.getDay()}/${date.getMonth()}`,
+        day: `${date.getDay() + 1}/${date.getMonth()}`,
         count: savedBot.votes
           .filter(v => v.at.getDate() === date.getDate()).length
         }));
