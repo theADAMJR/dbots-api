@@ -6,6 +6,8 @@ import bodyParser from 'body-parser';
 import { join } from 'path';
 import rateLimiter from './modules/rate-limiter';
 import Log from '../utils/log';
+import Deps from '../utils/deps';
+import Stats from './modules/stats';
 
 import { router as apiRoutes } from './routes/api-routes';
 import { router as botsRoutes } from './routes/bots/bots-routes';
@@ -18,7 +20,7 @@ export const app = express(),
              AuthClient = new OAuthClient(config.bot.id, config.bot.secret);
 
 export class API {
-    constructor() {
+    constructor(private stats = Deps.get<Stats>(Stats)) {        
         AuthClient.setRedirect(`${config.api.url}/auth`);
         AuthClient.setScopes('identify', 'guilds');
 
@@ -33,12 +35,14 @@ export class API {
 
         app.get('/server', (req, res) => res.redirect(`https://discord.gg/${config.api.supportInvite}`));
         
-        app.use(express.static(join(__dirname, '..', config.dashboard.distPath)));
+        app.use(express.static(join(__dirname, '../dist/dashboard')));
         
         app.all('*', (req, res) => res.status(200).sendFile(
-            join(__dirname, '..', config.dashboard.distPath, '/index.html')));
+            join(__dirname, '../dist/dashboard/index.html')));
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
+        
+        this.stats.init();
     }
 }

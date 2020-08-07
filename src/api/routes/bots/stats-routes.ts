@@ -21,6 +21,9 @@ router.post('/stats', async (req, res) => {
     savedBot.stats = req.body as BotStats;
     await savedBot.save();
 
+    // update stats for bot
+    
+
     res.json({ success: true });
   } catch (error) { sendError(res, 400, error); }
 });

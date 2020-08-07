@@ -1,0 +1,52 @@
+{
+  "name": "dbots",
+  "version": "0.0.1",
+  "description": "Best Discord bot list",
+  "main": "bot.js",
+  "scripts": {
+    "test": "ts-mocha tests/**/**/*.tests.ts",
+    "test:u": "ts-mocha tests/unit/**/*.tests.ts",
+    "test:i": "ts-mocha tests/integration/**/*.tests.ts",
+    "start": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
+    "start:dev": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
+    "start:forever": "forever start -v -c ts-node bot.ts"
+  },
+  "keywords": [],
+  "author": "ADAMJR#0001",
+  "license": "ISC",
+  "dependencies": {
+    "@lykmapipo/rate-limit-mongoose": "^0.1.29",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "canvas": "^2.6.1",
+    "cors": "^2.8.5",
+    "disco-oauth": "github:TheDrone7/disco-oauth",
+    "discord.js": "^12.0.2",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.1.3",
+    "mongoose": "^5.9.3",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/chai": "^4.2.10",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/dom-to-image": "^2.6.1",
+    "@types/express": "^4.17.6",
+    "@types/mocha": "^7.0.2",
+    "@types/mongoose": "^5.7.3",
+    "@types/node-fetch": "^2.5.7",
+    "@types/supertest": "^2.0.8",
+    "@types/ws": "^7.2.2",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "forever": "^3.0.0",
+    "mocha": "^7.1.2",
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2",
+    "ts-mocha": "^6.0.0",
+    "ts-mockito": "^2.5.0",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  }
+}

@@ -32,4 +32,8 @@ export default class Bots extends DBWrapper<string, BotDocument> {
     async getManageable({ id }: { id: string }) {
         return await SavedBot.find({ ownerId: id });
     }
+
+    async getAll() {
+        return await SavedBot.find();
+    }
 }

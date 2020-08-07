@@ -2,7 +2,6 @@ import Log from '../../utils/log';
 import EventHandler from './event-handler';
 import { bot } from '../../bot';
 import config from '../../../config.json';
-
 export default class ReadyHandler implements EventHandler {
     on = 'ready';
 

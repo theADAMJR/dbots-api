@@ -1,11 +1,7 @@
-export default class Deps {
-    static testing = false;
-    
+export default class Deps {    
     private static deps: any[] = [];
 
-    static build(...types: any) {
-        if (this.testing) return;
-                          
+    static build(...types: any) {                          
         for (const Type of types) {
             try { this.deps.push(new Type()); }
             catch {}

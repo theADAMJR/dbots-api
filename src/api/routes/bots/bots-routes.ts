@@ -11,10 +11,15 @@ import { sendLog } from './manage-bot-routes';
 import config from '../../../../config.json';
 import { UserDocument } from '../../../data/models/user';
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
+import Stats from '../../modules/stats';
+import BotTokens from '../../../data/bot-tokens';
+import fetch from 'node-fetch';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots),
+      botTokens = Deps.get<BotTokens>(BotTokens),
+      stats = Deps.get<Stats>(Stats),
       users = Deps.get<Users>(Users);
 
 router.get('/', async (req, res) => {
@@ -75,6 +80,8 @@ router.delete('/:id', async (req, res) => {
 
 router.get('/:id/vote', async (req, res) => {
     try {
+        const id = req.params.id;
+        
         const voter = await getUser(req.query.key);
         const savedVoter = await users.get(voter);
 
@@ -83,14 +90,27 @@ router.get('/:id/vote', async (req, res) => {
         savedVoter.lastVotedAt = new Date();
         await savedVoter.save();
 
-        const savedBot = await bots.get(req.params.id);
-        savedBot.votes.push(voter.id);
+        const vote = { at: new Date(), by: voter.id };
+
+        const savedBot = await bots.get(id);
+        savedBot.votes.push(vote);
         savedBot.lastVoteAt = new Date();
         await savedBot.save();
+
+        await postVoteWebhook(id, vote);
 
         res.json({ success: true });        
     } catch (error) { sendError(res, 400, error); }
 });
+
+async function postVoteWebhook(id: string, vote: any) {
+    const savedToken = await botTokens.get(id);
+        await fetch(savedToken.voteWebhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(vote)
+        });
+}
 
 router.get('/:id/saved', async (req, res) => {
     try {
@@ -108,6 +128,17 @@ router.get('/:id/widget', async (req, res) => {
         
         res.set({ 'Content-Type': 'image/png' }).send(image);
     } catch (error) { sendError(res, 400, error); }
+});
+
+router.get('/:id/stats', (req, res) => {
+    const id = req.params.id;
+
+    res.json({
+        general: stats.general(id),
+        topVoters: stats.votes(id),
+        votes: stats.votes(id),
+        recentVotes: stats.recentVotes(id)
+    });
 });
 
 function validateIfCanVote(savedVoter: UserDocument) {

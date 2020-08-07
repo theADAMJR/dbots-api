@@ -19,6 +19,11 @@ export interface Feedback {
     by: string;
 }
 
+export interface Vote {
+    at: Date;
+    by: string;
+}
+
 const botSchema = new Schema({
     _id: String,
     approvedAt: Date,
@@ -44,7 +49,7 @@ export interface BotDocument extends Document {
     stats: { guildCount: number },
     totalVotes: number;
     lastVoteAt: Date;
-    votes: string[];
+    votes: Vote[];
 }
 
 export const SavedBot = model<BotDocument>('bot', botSchema);

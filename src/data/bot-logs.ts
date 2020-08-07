@@ -13,4 +13,8 @@ export default class BotLogs extends DBWrapper<string, LogDocument> {
     protected async create(id: string) {
         return new SavedLog({ _id: id }).save();
     }
+
+    async getAll() {
+        return await SavedLog.find();
+    }
 }
