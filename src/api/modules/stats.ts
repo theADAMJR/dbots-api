@@ -1,5 +1,4 @@
 import Deps from '../../utils/deps';
-import Logs from '../../data/bot-logs';
 import Bots from '../../data/bots';
 import { BotDocument } from '../../data/models/bot';
 
@@ -44,7 +43,7 @@ export default class Stats {
             .toString()
             .padStart(2, '0')}`,
         count: savedBot.votes
-          .filter(v => v.at.getDate() === date.getDate()).length }))
+          .filter(v => v.at?.getDate() === date?.getDate()).length }))
       .reverse();
   }
 
