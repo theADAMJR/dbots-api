@@ -12,7 +12,7 @@ router.get('/', (req, res) => res.json({ elthre: 'hlao' }));
 router.get('/auth', async (req, res) => {
   try {
     const key = await AuthClient.getAccess(req.query.code);
-    res.redirect(`${config.dashboard.url}/auth?key=${key}`);
+    res.redirect(`${config.dashboardURL}/auth?key=${key}`);
   } catch (error) { sendError(res, 400, error); }
 });
 
