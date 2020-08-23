@@ -38,7 +38,7 @@ export class API {
         app.use(express.static(join(__dirname, '../../../dist/dashboard')));
         
         app.all('*', (req, res) => res.status(200).sendFile(
-            join(__dirname, '../../../dist/dashboard/index.html')));
+            join(__dirname, '../../dist/dashboard/index.html')));
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
