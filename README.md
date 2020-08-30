@@ -37,4 +37,5 @@ Bot for DBots.
 ```
 
 ### Redirect URIs
-- `https://localhost:3000/api/auth` (locally)
+- `https://localhost:3000/api/v1/auth` (locally)
+- `https://localhost:4200/dashboard` (locally)
