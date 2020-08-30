@@ -44,12 +44,13 @@ export class API {
         app.use('/api/v1/bots/:id', reviewerRoutes, statsRoutes);
         app.use('/api/v1', apiRoutes);
 
+        // TODO: \/ remove
         app.get('/server', (req, res) => res.redirect(`https://discord.gg/${config.api.supportInvite}`));
         
         // uncomment if you are using Glitch or client-side rendering
         /*app.use(express.static(join(__dirname, '../../dist/browser')));
         app.all('*', (req, res) => res.status(200).sendFile(
-            join(__dirname, '../../dist/dashboard/browser.html')));*/
+            join(__dirname, '../../dist/twopg-dashboard/browser/index.html')));*/
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
