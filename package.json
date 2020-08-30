@@ -10,7 +10,7 @@
     "start": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
     "dev": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
     "watch": "tsc --watch",
-    "serve:ssr": "cd node dist/server && node main.js"
+    "serve:ssr": "cd dist/server && node main.js"
   },
   "keywords": [],
   "author": "ADAMJR#0001",
