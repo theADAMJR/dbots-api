@@ -5,11 +5,9 @@ import { MessageEmbed, TextChannel } from 'discord.js';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { getUser, AuthUser } from '../user-routes';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { validateBotManager } from './bots-routes';
-import { sendError } from '../../modules/api-utils';
+import { sendError, getUser, validateBotManager, AuthUser } from '../../modules/api-utils';
 
 export const router = Router();
 
@@ -68,10 +66,10 @@ router.delete('/:id([0-9]{18})', async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-function addDevRole(authUser: AuthUser) {
+function addDevRole({ id }: AuthUser) {
   bot.guilds.cache
       ?.get(config.guild.id).members.cache
-      .get(authUser.id)?.roles
+      .get(id)?.roles
       .add(config.guild.devRoleId);
 }
 
@@ -109,8 +107,8 @@ async function saveBotAndChanges(id: any, req: any) {
 
 export function sendLog(eventName: string, description: string, good = true) {
   return (bot.guilds.cache
-    ?.get(config.guild.id).channels.cache
-    ?.get(config.guild.logChannelId) as TextChannel)
+    .get(config.guild.id)?.channels.cache
+    .get(config.guild.logChannelId) as TextChannel)
     ?.send(new MessageEmbed({
       hexColor: '#' + (good ? '00FF00FF' : 'FF0000FF'),
       description,

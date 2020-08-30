@@ -1,19 +1,17 @@
 import { Router } from 'express';
-import { AuthClient } from '../../server';
 import { bot } from '../../../bot';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
-import { getUser } from '../user-routes';
-import { sendError } from '../../modules/api-utils';
+import { sendError, validateIfCanVote, validateBotManager, getUser, getManagableBots } from '../../modules/api-utils';
 import { SavedBot } from '../../../data/models/bot';
 import Users from '../../../data/users';
 import { sendLog } from './manage-bot-routes';
 import config from '../../../../config.json';
-import { UserDocument } from '../../../data/models/user';
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 import Stats from '../../modules/stats';
 import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
+import { AuthClient } from '../../server';
 
 export const router = Router();
 
@@ -43,7 +41,8 @@ router.get('/', async (req, res) => {
 
 router.get('/user', async (req, res) => {
     try {
-        const bots = await getManagableBots(req.query.key);
+        const { id } = await AuthClient.getUser(req.query.key);
+        const bots = await getManagableBots(id);
         res.json(bots);
     } catch (error) { sendError(res, 400, error); }
 });
@@ -144,36 +143,3 @@ router.get('/:id/stats', (req, res) => {
         recentVotes: stats.recentVotes(id)
     });
 });
-
-function validateIfCanVote(savedVoter: UserDocument) {
-    const twelveHoursMs = 1000 * 60 * 60 * 12;
-    const oneDayAgo = new Date(Date.now() - twelveHoursMs);
-    if (savedVoter.lastVotedAt > oneDayAgo) {
-        const timeLeftMs = new Date(savedVoter.lastVotedAt.getTime() + twelveHoursMs).getTime() - Date.now();
-        const hoursLeft = (timeLeftMs / 1000 / 60 / 60);
-        throw new TypeError(`You have already voted. You can next vote in ${hoursLeft.toFixed(2)} hours.`);
-    }
-}
-
-async function getManagableBots(key: any) {
-    const { id } = await AuthClient.getUser(key);
-    const owner = bot.users.cache.get(id);
-
-    const savedBots = await bots.getManageable(owner);
-    const ids = savedBots.map(b => b._id);
-
-    return bot.users.cache.filter(u => ids.includes(u.id));
-}
-
-export async function validateBotManager(key: any, botId: string) {
-    if (!key)
-        throw new TypeError('Unauthorized.');
-
-    const bots = await getManagableBots(key);
-    if (!bots.some(b => b.id === botId))
-        throw TypeError('Bot not manageable.');
-}
-
-export interface BotStats {
-    guildCount: number;
-}

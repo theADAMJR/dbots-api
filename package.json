@@ -8,8 +8,8 @@
     "test:u": "ts-mocha tests/unit/**/*.tests.ts",
     "test:i": "ts-mocha tests/integration/**/*.tests.ts",
     "start": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
-    "start:dev": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
-    "start:forever": "forever start -v -c ts-node bot.ts"
+    "dev": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
+    "watch": "tsc --watch"
   },
   "keywords": [],
   "author": "ADAMJR#0001",
@@ -40,7 +40,6 @@
     "@types/ws": "^7.2.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "forever": "^3.0.0",
     "mocha": "^7.1.2",
     "nodemon": "^2.0.3",
     "supertest": "^4.0.2",

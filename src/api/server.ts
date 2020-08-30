@@ -15,12 +15,18 @@ import { router as manageBotRoutes } from './routes/bots/manage-bot-routes';
 import { router as reviewerRoutes } from './routes/bots/reviewer-routes';
 import { router as statsRoutes } from './routes/bots/stats-routes';
 import { router as userRoutes } from './routes/user-routes';
+import SitemapGenerator from './modules/sitemap-generator';
 
 export const app = express(),
              AuthClient = new OAuthClient(config.bot.id, config.bot.secret);
 
 export class API {
-    constructor(private stats = Deps.get<Stats>(Stats)) {        
+    rootSitemap = '';
+    botsSitemap = '';
+
+    constructor(
+        private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
+        private stats = Deps.get<Stats>(Stats)) {        
         AuthClient.setRedirect(`${config.api.url}/auth`);
         AuthClient.setScopes('identify', 'guilds');
 
@@ -28,21 +34,31 @@ export class API {
         app.use(cors());
         app.use(bodyParser.json());
 
-        app.use('/api/user', userRoutes);
-        app.use('/api/bots', botsRoutes, manageBotRoutes);
-        app.use('/api/bots/:id', reviewerRoutes, statsRoutes);
-        app.use('/api', apiRoutes);
+        app.get('/api/v1/sitemaps/root.xml', (req, res) =>
+            res.set('Content-Type', 'text/xml').send(this.rootSitemap));
+        app.get('/api/v1/sitemaps/bots.xml', (req, res) =>
+            res.set('Content-Type', 'text/xml').send(this.botsSitemap));
+
+        app.use('/api/v1/user', userRoutes);
+        app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
+        app.use('/api/v1/bots/:id', reviewerRoutes, statsRoutes);
+        app.use('/api/v1', apiRoutes);
 
         app.get('/server', (req, res) => res.redirect(`https://discord.gg/${config.api.supportInvite}`));
         
-        app.use(express.static(join(__dirname, '../../../dist/dashboard')));
-        
+        // uncomment if you are using Glitch or client-side rendering
+        /*app.use(express.static(join(__dirname, '../../dist/dashboard')));
         app.all('*', (req, res) => res.status(200).sendFile(
-            join(__dirname, '../../dist/dashboard/index.html')));
+            join(__dirname, '../../dist/dashboard/index.html')));*/
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
         
         this.stats.init();
+    }
+
+    async initSitemaps() {
+        this.rootSitemap = this.sitemapGenerator.getRootMap();
+        this.botsSitemap = await this.sitemapGenerator.getBotsMap();
     }
 }

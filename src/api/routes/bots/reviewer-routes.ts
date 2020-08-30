@@ -1,12 +1,11 @@
 import { Router } from 'express';
 import { bot } from '../../../bot';
-import { getUser } from '../user-routes';
 import { Feedback } from '../../../data/models/bot';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import Users from '../../../data/users';
 import { sendLog } from './manage-bot-routes';
-import { sendError } from '../../modules/api-utils';
+import { sendError, getUser } from '../../modules/api-utils';
 
 export const router = Router({ mergeParams: true });
 

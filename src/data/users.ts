@@ -1,7 +1,7 @@
 import { User } from 'discord.js';
 import { SavedUser, UserDocument } from './models/user';
 import DBWrapper from './db-wrapper';
-import { AuthUser } from '../api/routes/user-routes';
+import { AuthUser } from '../api/modules/api-utils';
 
 export default class Users extends DBWrapper<User | AuthUser, UserDocument> {
     protected async getOrCreate(user: User | AuthUser) {

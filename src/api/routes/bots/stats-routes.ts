@@ -2,9 +2,8 @@ import { Router } from 'express';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { sendError } from '../../modules/api-utils';
+import { sendError, BotStats, validateBotManager } from '../../modules/api-utils';
 import BotTokens from '../../../data/bot-tokens';
-import { BotStats, validateBotManager } from './bots-routes';
 
 export const router = Router({ mergeParams: true });
 
