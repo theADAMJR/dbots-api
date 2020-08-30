@@ -31,7 +31,7 @@ Bot for DBots.
         "port": "3000",
         "supportInvite": "uDTgxyg"
     },
-    "dashboardURL: "http://localhost:4200",
+    "dashboardURL": "http://localhost:4200",
     "mongoURL": "mongodb://localhost/DBots"
 }
 ```
