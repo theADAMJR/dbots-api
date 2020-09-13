@@ -5,10 +5,10 @@
   "main": "bot.js",
   "scripts": {
     "test": "ts-mocha tests/**/**/*.tests.ts",
-    "test:u": "ts-mocha tests/unit/**/*.tests.ts",
-    "test:i": "ts-mocha tests/integration/**/*.tests.ts",
-    "start": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
-    "dev": "nodemon --exec ts-node bot.ts --watch * -e ts,json",
+    "test:u": "ts-mocha tests/unit/*.tests.ts",
+    "test:i": "ts-mocha tests/integration/*.tests.ts",
+    "start": "ts-node src/bot.ts",
+    "dev": "ts-node-dev src/bot.ts",
     "watch": "tsc --watch",
     "serve:ssr": "node dist/twopg-dashboard/server/main.js"
   },
