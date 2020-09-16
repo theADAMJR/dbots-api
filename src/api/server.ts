@@ -43,9 +43,6 @@ export class API {
         app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
         app.use('/api/v1/bots/:id', reviewerRoutes, statsRoutes);
         app.use('/api/v1', apiRoutes);
-
-        // TODO: \/ remove
-        app.get('/server', (req, res) => res.redirect(`https://discord.gg/${config.api.supportInvite}`));
         
         // uncomment if you are using Glitch or client-side rendering
         /*app.use(express.static(join(__dirname, '../../dist/browser')));
