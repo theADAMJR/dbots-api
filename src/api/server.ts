@@ -3,7 +3,7 @@ import config from '../../config.json';
 import cors from 'cors';
 import OAuthClient from 'disco-oauth';
 import bodyParser from 'body-parser';
-import { join } from 'path';
+import { resolve } from 'path';
 import rateLimiter from './modules/rate-limiter';
 import Log from '../utils/log';
 import Deps from '../utils/deps';
@@ -45,9 +45,11 @@ export class API {
         app.use('/api/v1', apiRoutes);
         
         // uncomment if you are using Glitch or client-side rendering
-        /*app.use(express.static(join(__dirname, '../../dist/browser')));
-        app.all('*', (req, res) => res.status(200).sendFile(
-            join(__dirname, '../../dist/twopg-dashboard/browser/index.html')));*/
+        /*const dashboardPath = resolve('./dist/twopg-dashboard/browser');
+        app.use(express.static(dashboardPath));
+        app.all('*', (req, res) => res
+            .status(200)
+            .sendFile(`${dashboardPath}/index.html`));*/
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
