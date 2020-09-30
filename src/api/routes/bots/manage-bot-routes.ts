@@ -7,40 +7,36 @@ import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { sendError, getUser, validateBotManager, AuthUser } from '../../modules/api-utils';
+import { sendError, AuthUser } from '../../modules/api-utils';
+import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots),
       logs = Deps.get<BotLogs>(BotLogs);
 
-router.post('/', async (req, res) => {
+router.post('/', updateUser, async (req, res) => {
   try {
-    const authUser = await getUser(req.query.key);
-
     const listing: Listing = req.body;
     const id = listing.botId;
     await validateCanCreate(req, id);
 
     const savedBot = await bots.get(id);
     savedBot.listing = listing;
-    savedBot.ownerId = authUser.id;
+    savedBot.ownerId = res.locals.user.id;
     await savedBot.save();
 
     await sendLog('Bot Added', `<@!${savedBot.ownerId}> added <@!${id}>.`);
 
-    addDevRole(authUser);
+    addDevRole(res.locals.user);
 
-    res.status(200).json(savedBot);
+    res.status(201).json(savedBot);
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.put('/:id([0-9]{18})', async (req, res) => {
+router.put('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
-    const { id } = req.params;
-    const key = req.query.key;
-
-    await validateBotManager(key, id);
+    const id = req.params.id;
 
     const listing: Listing = req.body;
     await validateCanEdit(req, listing);
@@ -53,16 +49,11 @@ router.put('/:id([0-9]{18})', async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.delete('/:id([0-9]{18})', async (req, res) => {
+router.delete('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
-    const { id } = req.params;
-    const key = req.query.key;
-
-    await validateBotManager(key, id);
-
     await bots.delete(req.params.id);
 
-    res.json({ success: true });
+    res.json({ code: 200, message: 'Success' });
   } catch (error) { sendError(res, 400, error); }
 });
 

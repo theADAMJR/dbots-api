@@ -5,16 +5,17 @@ import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import Users from '../../../data/users';
 import { sendLog } from './manage-bot-routes';
-import { sendError, getUser } from '../../modules/api-utils';
+import { sendError } from '../../modules/api-utils';
+import { updateUser } from '../../modules/middleware';
 
 export const router = Router({ mergeParams: true });
 
 const bots = Deps.get<Bots>(Bots),
       users = Deps.get<Users>(Users);
 
-router.post('/review', async (req, res) => {
+router.post('/review', updateUser, async (req, res) => {
   try {
-    const reviewer = await getUser(req.query.key);
+    const reviewer = res.locals.user;
     const savedReviewer = await users.get(reviewer);
     if (savedReviewer.role !== 'admin' &&
       savedReviewer.role !== 'reviewer')
@@ -34,9 +35,9 @@ router.post('/review', async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/add-badge/:name', async (req, res) => {
+router.get('/add-badge/:name', updateUser, async (req, res) => {
   try {
-    const reviewer = await getUser(req.query.key);
+    const reviewer = res.locals.user;
     const savedReviewer = await users.get(reviewer);
     if (savedReviewer.role !== 'admin')
       throw new TypeError('Insufficient permissions.');

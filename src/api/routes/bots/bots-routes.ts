@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { bot } from '../../../bot';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
-import { sendError, validateIfCanVote, validateBotManager, getUser, getManagableBots } from '../../modules/api-utils';
-import { SavedBot } from '../../../data/models/bot';
+import { sendError, validateIfCanVote } from '../../modules/api-utils';
+import { SavedBot, Vote } from '../../../data/models/bot';
 import Users from '../../../data/users';
 import { sendLog } from './manage-bot-routes';
 import config from '../../../../config.json';
@@ -11,7 +11,7 @@ import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 import Stats from '../../modules/stats';
 import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
-import { AuthClient } from '../../server';
+import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
 
 export const router = Router();
 
@@ -39,13 +39,8 @@ router.get('/', async (req, res) => {
     } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/user', async (req, res) => {
-    try {
-        const { id } = await AuthClient.getUser(req.query.key);
-        const bots = await getManagableBots(id);
-        res.json(bots);
-    } catch (error) { sendError(res, 400, error); }
-});
+router.get('/user', updateUser, updateManageableBots,
+    async (req, res) => res.json(res.locals.bots));
 
 router.get('/:id', (req, res) => {
     try {
@@ -58,15 +53,12 @@ router.get('/:id', (req, res) => {
     } catch (error) { sendError(res, 400, error); }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
     try {
         const id = req.params.id;
-        await validateBotManager(req.query.key, id);
 
         await bots.delete(id);
-
-        const instigator = await getUser(req.query.key);
-        await sendLog(`Bot Deleted`, `<@!${instigator.id}> deleted <@!${id}> for some reason.`, false);
+        await sendLog(`Bot Deleted`, `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`, false);
 
         await bot.guilds.cache
             .get(config.guild.id)?.members.cache
@@ -77,11 +69,11 @@ router.delete('/:id', async (req, res) => {
     } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/:id/vote', async (req, res) => {
+router.get('/:id/vote', updateUser, async (req, res) => {
     try {
         const id = req.params.id;
         
-        const voter = await getUser(req.query.key);
+        const voter = res.locals.user;
         const savedVoter = await users.get(voter);
 
         validateIfCanVote(savedVoter);
@@ -89,7 +81,7 @@ router.get('/:id/vote', async (req, res) => {
         savedVoter.lastVotedAt = new Date();
         await savedVoter.save();
 
-        const vote = { at: new Date(), by: voter.id };
+        const vote: Vote = { at: new Date(), by: voter.id };
 
         const savedBot = await bots.get(id);
         savedBot.votes.push(vote);
@@ -103,10 +95,9 @@ router.get('/:id/vote', async (req, res) => {
     } catch (error) { sendError(res, 400, error); }
 });
 
-async function postVoteWebhook(id: string, vote: any) {
+async function postVoteWebhook(id: string, vote: Vote) {
     const savedToken = await botTokens.get(id);
     try {
-
         await fetch(savedToken.voteWebhookURL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

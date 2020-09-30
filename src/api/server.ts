@@ -45,11 +45,11 @@ export class API {
         app.use('/api/v1', apiRoutes);
         
         // uncomment if you are using Glitch or client-side rendering
-        const dashboardPath = resolve('./dist/browser');
+        /*const dashboardPath = resolve('./dist/browser');
         app.use(express.static(dashboardPath));
         app.all('*', (req, res) => res
             .status(200)
-            .sendFile(`${dashboardPath}/index.html`));
+            .sendFile(`${dashboardPath}/index.html`));*/
 
         const port = config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));

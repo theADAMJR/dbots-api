@@ -2,8 +2,9 @@ import { Router } from 'express';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { sendError, BotStats, validateBotManager } from '../../modules/api-utils';
+import { BotStats, sendError } from '../../modules/api-utils';
 import BotTokens from '../../../data/bot-tokens';
+import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
 
 export const router = Router({ mergeParams: true });
 
@@ -18,39 +19,29 @@ router.post('/stats', async (req, res) => {
 
     const savedBot = await bots.get(id);
     savedBot.stats = req.body as BotStats;
-    await savedBot.save();
-
-    // update stats for bot
-    
+    await savedBot.save();    
 
     res.json({ success: true });
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/log', async(req, res) => {
+router.get('/log', updateUser, updateManageableBots, validateBotManager, async(req, res) => {
   try {
-    const id = req.params.id;
-    await validateBotManager(req.query.key, id);
-
-    const log = await logs.get(id);
+    const log = await logs.get(req.params.id);
     res.json(log);
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/token', async (req, res) => {
+router.get('/token', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
-    const id = req.params.id;
-    await validateBotManager(req.query.key, id);
-
-    const { token } = await botTokens.get(id);
+    const { token } = await botTokens.get(req.params.id);
     res.json(token);
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.get('/token/regen', async (req, res) => {
+router.get('/token/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
-    await validateBotManager(req.query.key, id);
 
     await botTokens.delete(id);
     const { token } = await botTokens.get(id);

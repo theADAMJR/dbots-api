@@ -9,6 +9,7 @@ export class XPCard {
 
 const userSchema = new Schema({
     _id: String,
+    banned: Boolean,
     lastVotedAt: Date,
     premium: Boolean,
     role: String
@@ -16,6 +17,7 @@ const userSchema = new Schema({
 
 export interface UserDocument extends Document {
     _id: string;
+    banned: boolean;
     lastVotedAt: Date;
     premium: boolean;
     role: UserRole;

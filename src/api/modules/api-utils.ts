@@ -1,30 +1,8 @@
 import { AuthClient } from '../server';
-import Bots from '../../data/bots';
-import Deps from '../../utils/deps';
-import { bot } from '../../bot';
 import { UserDocument } from '../../data/models/user';
-
-const bots = Deps.get<Bots>(Bots);
 
 export function sendError(res: any, code: number, error: Error) {
   return res.status(code).json({ code, message: error?.message });
-}
-
-export async function getManagableBots(userId: string) {
-  const savedBots = await bots.getManageable({ id: userId });  
-  return bot.users.cache
-    .filter(u => savedBots
-      .some(sb => sb._id === u.id));
-}
-
-export async function validateBotManager(key: any, botId: string) {
-  if (!key)
-    throw new TypeError('Unauthorized.');
-
-  const { id } = await AuthClient.getUser(key);
-  const bots = await getManagableBots(id);
-  if (!bots.some(b => b.id === botId))
-    throw TypeError('Bot not manageable.');
 }
 
 export async function getUser(key: any) {
