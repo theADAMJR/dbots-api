@@ -71,6 +71,12 @@ async function validateCanCreate(req, id: string) {
   const exists = await bots.exists(id);
   if (exists)
     throw new TypeError('Bot already exists!');
+
+  const userInGuild = bot.guilds.cache
+    .get(config.guild.id).members.cache
+    .has(req.locals.user.id);
+  if (!userInGuild)
+    throw new TypeError('You must be in the DBots Discord Server to post bots.');
 }
 async function validateCanEdit(req, listing: Listing) {
   if (!req.body)

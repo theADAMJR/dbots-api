@@ -4,7 +4,7 @@ import { getMemberFromMention } from '../utils/command-utils';
 import Deps from '../utils/deps';
 import { Command, CommandContext, Permission } from './command';
 
-export default class HelpCommand implements Command {
+export default class ApproveCommand implements Command {
     name = 'approve';
     precondition: Permission = 'KICK_MEMBERS';
 

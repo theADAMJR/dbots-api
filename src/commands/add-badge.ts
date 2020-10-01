@@ -5,13 +5,11 @@ import { getIDFromMention, getMemberFromMention } from '../utils/command-utils';
 import Deps from '../utils/deps';
 import { Command, CommandContext, Permission } from './command';
 
-export default class HelpCommand implements Command {
+export default class AddBadgeCommand implements Command {
     name = 'add-badge';
-    precondition: Permission = 'KICK_MEMBERS';
+    precondition: Permission = 'ADMINISTRATOR';
 
-    constructor(
-        private bots = Deps.get<Bots>(Bots),
-        private users = Deps.get<Users>(Users)) {}
+    constructor(private bots = Deps.get<Bots>(Bots)) {}
     
     execute = async (ctx: CommandContext, userMention: string, badgeName: string) => {
         const botId = getIDFromMention(userMention);

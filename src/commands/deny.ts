@@ -1,11 +1,10 @@
 import Bots from '../data/bots';
-import Users from '../data/users';
 import { handleFeedback } from '../modules/reviewal';
 import { getMemberFromMention } from '../utils/command-utils';
 import Deps from '../utils/deps';
 import { Command, CommandContext, Permission } from './command';
 
-export default class HelpCommand implements Command {
+export default class DenyCommand implements Command {
     name = 'deny';
     precondition: Permission = 'KICK_MEMBERS';
 
