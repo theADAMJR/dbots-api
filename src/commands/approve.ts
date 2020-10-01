@@ -16,11 +16,14 @@ export default class ApproveCommand implements Command {
         if (!exists)
           throw new TypeError('Bot does not exist.');
 
+        const message = reason.join(' ');
         await handleFeedback(botMember.id, {
             approved: true,
             by: ctx.user.id,
-            message: reason.join(' ')
+            message
         });
+
+        await botMember.kick(message);
 
         return ctx.channel.send(`✔ Success`);
     }
