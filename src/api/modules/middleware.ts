@@ -7,7 +7,7 @@ const bots = Deps.get<Bots>(Bots);
 
 export async function updateUser(req, res, next) {
   try {
-    const key = req.get('Authorization');
+    const key = req.get('Authorization');    
     res.locals.user = await getUser(key);
   } finally {
     return next();
