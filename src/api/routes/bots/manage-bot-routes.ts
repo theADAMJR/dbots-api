@@ -63,7 +63,7 @@ function addDevRole(id: string) {
   return bot.guilds.cache
       ?.get(config.guild.id).members.cache
       .get(id)?.roles
-      .add(config.guild.devRoleId);
+      .add(config.guild.devRoleId, 'Added bot.');
 }
 
 async function validateCanCreate(req, res, id: string) {
