@@ -4,7 +4,8 @@ import { getWeek } from '../utils/command-utils';
 
 export default class Bots extends DBWrapper<string, BotDocument> {
     protected async getOrCreate(id: string) {
-        if (!id || id === 'user') return null;
+        if (!id || id === 'user')
+            return null;
 
         const savedBot = await SavedBot.findById(id)
             ?? await this.create(id);

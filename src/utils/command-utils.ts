@@ -9,8 +9,8 @@ export function getMemberFromMention(mention: string, guild: any): GuildMember {
     return member;
 }
 
-export function getIDFromMention(mention: string): string {    
-    return mention.replace(/^<@!?(\d+)>$/gm, '$1');
+export function getIDFromMention(mention?: string): string {    
+    return mention?.replace(/^<@!?(\d+)>$/gm, '$1');
 }
 
 export function createUUID() {

@@ -63,7 +63,7 @@ export default class Stats {
   async init() {
     await this.updateValues();
 
-    const interval = 30 * 60 * 1000;
+    const interval = 5 * 60 * 1000;
     setInterval(() => this.updateValues(), interval);
   }
 

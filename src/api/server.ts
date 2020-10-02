@@ -12,7 +12,6 @@ import Stats from './modules/stats';
 import { router as apiRoutes } from './routes/api-routes';
 import { router as botsRoutes } from './routes/bots/bots-routes';
 import { router as manageBotRoutes } from './routes/bots/manage-bot-routes';
-import { router as reviewerRoutes } from './routes/bots/reviewer-routes';
 import { router as statsRoutes } from './routes/bots/stats-routes';
 import { router as userRoutes } from './routes/user-routes';
 import SitemapGenerator from './modules/sitemap-generator';
@@ -41,7 +40,7 @@ export class API {
 
         app.use('/api/v1/user', userRoutes);
         app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
-        app.use('/api/v1/bots/:id', reviewerRoutes, statsRoutes);
+        app.use('/api/v1/bots/:id', statsRoutes);
         app.use('/api/v1', apiRoutes);
         
         // uncomment if you are using Glitch or client-side rendering

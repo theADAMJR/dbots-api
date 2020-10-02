@@ -8,27 +8,29 @@ import BotLogs from '../../../data/bot-logs';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
 import { sendError, AuthUser } from '../../modules/api-utils';
-import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
+import { updateManageableBots, updateUser, validateBotManager, validateUser } from '../../modules/middleware';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots),
       logs = Deps.get<BotLogs>(BotLogs);
 
-router.post('/', updateUser, async (req, res) => {
+router.post('/', updateUser, validateUser, async (req, res) => {
   try {
     const listing: Listing = req.body;
     const id = listing.botId;
-    await validateCanCreate(req, id);
+    await validateCanCreate(req, res, id);
 
     const savedBot = await bots.get(id);
     savedBot.listing = listing;
     savedBot.ownerId = res.locals.user.id;
     await savedBot.save();
 
-    await sendLog('Bot Added', `<@!${savedBot.ownerId}> added <@!${id}>.`);
-
-    addDevRole(res.locals.user);
+    try {
+      await sendLog('Bot Added', `<@!${savedBot.ownerId}> added <@!${id}>.`);
+      await addDevRole(savedBot.ownerId);
+    }
+    catch {}
 
     res.status(201).json(savedBot);
   } catch (error) { sendError(res, 400, error); }
@@ -57,14 +59,14 @@ router.delete('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotMa
   } catch (error) { sendError(res, 400, error); }
 });
 
-function addDevRole({ id }: AuthUser) {
-  bot.guilds.cache
+function addDevRole(id: string) {
+  return bot.guilds.cache
       ?.get(config.guild.id).members.cache
       .get(id)?.roles
       .add(config.guild.devRoleId);
 }
 
-async function validateCanCreate(req, id: string) {
+async function validateCanCreate(req, res, id: string) {
   if (!req.body)
     throw new TypeError('Request body is empty.');
 
@@ -74,7 +76,7 @@ async function validateCanCreate(req, id: string) {
 
   const userInGuild = bot.guilds.cache
     .get(config.guild.id).members.cache
-    .has(req.locals.user.id);
+    .has(res.locals.user.id);
   if (!userInGuild)
     throw new TypeError('You must be in the DBots Discord Server to post bots.');
 }
@@ -102,13 +104,13 @@ async function saveBotAndChanges(id: any, req: any) {
   return bots.save(savedBot);
 }
 
-export function sendLog(eventName: string, description: string, good = true) {
+export function sendLog(title: string, description: string, good = true) {
   return (bot.guilds.cache
     .get(config.guild.id)?.channels.cache
     .get(config.guild.logChannelId) as TextChannel)
     ?.send(new MessageEmbed({
       hexColor: '#' + (good ? '00FF00FF' : 'FF0000FF'),
       description,
-      title: eventName
+      title
     }));
 }

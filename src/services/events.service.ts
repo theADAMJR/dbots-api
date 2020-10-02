@@ -24,7 +24,7 @@ export default class EventsService {
 
     private hookEvents() {
         for (const handler of this.handlers)
-            bot.on(handler.on as any, handler.invoke.bind(handler));
+            bot.on(handler.on, handler.invoke.bind(handler));
 
         Log.info(`Loaded: ${this.handlers.length} handlers`, 'events');
     }

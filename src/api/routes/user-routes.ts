@@ -9,13 +9,11 @@ export const router = Router();
 
 const users = Deps.get<Users>(Users);
 
-router.get('/', updateUser, async (req, res) => res.json(res.locals.user));
-
-router.get('/saved', updateUser, async (req, res) => {
-    try {
-        const savedUser = await users.get(res.locals.user);
-        res.json(savedUser);
-    } catch (error) { sendError(res, 400, error); }
+router.get('/', updateUser, async (req, res) => {
+    res.json({
+        user: res.locals.user,
+        saved: await users.get(res.locals.user)
+    });
 });
 
 router.get('/:id', (req, res) => {
