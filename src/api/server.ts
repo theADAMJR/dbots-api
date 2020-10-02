@@ -44,7 +44,7 @@ export class API {
         app.use('/api/v1', apiRoutes);
         
         // uncomment if you are using Glitch or client-side rendering
-        /*const dashboardPath = resolve('./dist/browser');
+        /*const dashboardPath = resolve('./dist/twopg-dashboard/browser');
         app.use(express.static(dashboardPath));
         app.all('*', (req, res) => res
             .status(200)

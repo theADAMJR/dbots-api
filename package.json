@@ -10,7 +10,7 @@
     "start": "ts-node src/bot.ts",
     "dev": "ts-node-dev src/bot.ts",
     "watch": "tsc --watch",
-    "serve:ssr": "node dist/server/main.js"
+    "serve:ssr": "node dist/twopg-dashboard/server/main.js"
   },
   "keywords": [],
   "author": "ADAMJR#0001",
