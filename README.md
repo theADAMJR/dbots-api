@@ -3,7 +3,7 @@ Bot for DBots.
 
 **Dashboard**: https://github.com/theADAMJR/DBots
 
-![2PG Avatar](https://dbots.co/assets/img/logo.png)
+![API](https://socialify.git.ci/DBots-co/API/image?description=1&descriptionEditable=API%20Routes%2FServer%20files%20for%20dbots.co&font=Source%20Code%20Pro&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars0.githubusercontent.com%2Fu%2F70011081%3Fs%3D200%26v%3D4&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
 
 ## Installation
 1) Fork/download this respository
