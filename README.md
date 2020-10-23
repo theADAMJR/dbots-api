@@ -27,7 +27,7 @@ Bot for DBots.
         "logChannelId": "724730682433077359"
     },
     "api": {
-        "url": "http://localhost:3000/api",
+        "url": "http://localhost:3000/api/v1",
         "port": "3000",
         "supportInvite": "uDTgxyg"
     },
