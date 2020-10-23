@@ -26,7 +26,7 @@ export class API {
     constructor(
         private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
         private stats = Deps.get<Stats>(Stats)) {        
-        AuthClient.setRedirect(`${config.api.url}/v1/auth`);
+        AuthClient.setRedirect(`${config.api.url}/auth`);
         AuthClient.setScopes('identify', 'guilds');
 
         app.use(rateLimiter);
