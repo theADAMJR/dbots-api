@@ -26,7 +26,7 @@ export class API {
     constructor(
         private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
         private stats = Deps.get<Stats>(Stats)) {        
-        AuthClient.setRedirect(`${config.api.url}/auth`);
+        AuthClient.setRedirect(`${config.api.url}/v1/auth`);
         AuthClient.setScopes('identify', 'guilds');
 
         app.use(rateLimiter);
@@ -50,7 +50,7 @@ export class API {
             .status(200)
             .sendFile(`${dashboardPath}/index.html`));*/
 
-        const port = config.api.port || 3000;
+        const port = process.env.PORT || config.api.port || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
         
         this.stats.init();
