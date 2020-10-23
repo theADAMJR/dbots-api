@@ -32,6 +32,6 @@ router.post('/error', updateUser, async(req, res) => {
 });
 
 router.get('/login', (req, res) =>
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${config.bot.id}&redirect_uri=${config.api.url}/auth&response_type=code&scope=identify guilds&prompt=none`));
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${config.bot.id}&redirect_uri=${config.api.url}/v1/auth&response_type=code&scope=identify guilds&prompt=none`));
 
 router.get('*', (req, res) => sendError(res, 404, new TypeError('Not found.')));
