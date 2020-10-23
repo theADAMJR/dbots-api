@@ -37,7 +37,12 @@ export class API {
             res.set('Content-Type', 'text/xml').send(this.rootSitemap));
         app.get('/api/v1/sitemaps/bots.xml', (req, res) =>
             res.set('Content-Type', 'text/xml').send(this.botsSitemap));
+//the below line is for arc.io which redirects the below to their js file
+          app.get('/arc-sw.js', (req, res)=> res.redirect('https://arc.io/arc-sw.js'));
 
+        //since I put this lines via GitHub Website, these extra lines came, and they cant be dleeted via mobile (idk about pc) please delete these lines before u merge
+//next line stops redirection to 404 page when asked for /server and it redirects to server invite, as wanted.
+        app.get('/server', (req,res)=> res.redirect(`https://discord.gg/${config.api.supportInvite}`));
         app.use('/api/v1/user', userRoutes);
         app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
         app.use('/api/v1/bots/:id', statsRoutes);
