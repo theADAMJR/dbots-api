@@ -12,6 +12,9 @@
     "watch": "tsc --watch",
     "serve:ssr": "node dist/twopg-dashboard/server/main.js"
   },
+  "engines": {
+    "node": "12.x"
+  },
   "keywords": [],
   "author": "ADAMJR#0001",
   "license": "ISC",
