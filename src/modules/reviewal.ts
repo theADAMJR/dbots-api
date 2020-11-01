@@ -1,4 +1,4 @@
-import { sendLog } from '../api/routes/bots/manage-bot-routes';
+import { HexColor, sendLog } from '../api/routes/bots/manage-bot-routes';
 import { bot } from '../bot';
 import Bots from '../data/bots';
 import { Feedback } from '../data/models/bot';
@@ -14,8 +14,10 @@ export async function handleFeedback(botId: string, feedback: Feedback) {
       ?.send(`Your bot, <@!${savedBot.id}>, was ${feedback.approved ? 'approved' : 'not approved'} by <@!${feedback.by}> - \`${feedback.message}\``);
   } catch {}
 
-  await sendLog(`Bot ${feedback.approved ? 'Approved' : 'Not Approved'}`,
-    `<@!${savedBot.ownerId}>'s bot, <@!${botId}>, was ${feedback.approved ? 'approved' : 'not approved'} by <@!${feedback.by}> - \`${feedback.message}\``, feedback.approved);
+  await sendLog(
+    `Bot ${feedback.approved ? 'Approved' : 'Not Approved'}`,
+    `<@!${savedBot.ownerId}>'s bot, <@!${botId}>, was ${feedback.approved ? 'approved' : 'not approved'} by <@!${feedback.by}> - \`${feedback.message}\``,
+    (feedback.approved) ? HexColor.Green : HexColor.Red);
 
   if (!feedback.approved)
     return savedBot.remove();

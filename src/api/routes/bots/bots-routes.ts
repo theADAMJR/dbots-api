@@ -5,13 +5,14 @@ import Bots from '../../../data/bots';
 import { sendError, validateIfCanVote } from '../../modules/api-utils';
 import { SavedBot, Vote } from '../../../data/models/bot';
 import Users from '../../../data/users';
-import { sendLog } from './manage-bot-routes';
+import { HexColor, sendLog } from './manage-bot-routes';
 import config from '../../../../config.json';
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 import Stats from '../../modules/stats';
 import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
 import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
+import { getWeek } from '../../../utils/command-utils';
 
 export const router = Router();
 
@@ -28,6 +29,11 @@ router.get('/', async (req, res) => {
         for (const savedBot of savedBots) {
             const botUser = bot.users.cache.get(savedBot.id);
             if (!botUser) continue;
+
+            const votedForThisWeek = savedBot.lastVoteAt
+                && getWeek(savedBot.lastVoteAt) === getWeek(new Date());
+            if (!votedForThisWeek)
+                savedBot.votes = [];
 
             botUsers.push({
                 ...botUser,
@@ -58,7 +64,11 @@ router.delete('/:id', updateUser, updateManageableBots, validateBotManager, asyn
         const id = req.params.id;
 
         await bots.delete(id);
-        await sendLog(`Bot Deleted`, `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`, false);
+        await sendLog(
+            `Bot Deleted`,
+            `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
+            HexColor.Red
+        );
 
         await bot.guilds.cache
             .get(config.guild.id)?.members.cache

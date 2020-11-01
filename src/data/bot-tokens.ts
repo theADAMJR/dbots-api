@@ -4,7 +4,8 @@ import { createUUID } from '../utils/command-utils';
 
 export default class BotTokens extends DBWrapper<string, BotTokenDocument> {
     protected async getOrCreate(id: string) {
-        return await SavedBotToken.findById(id) ?? await this.create(id);
+        return await SavedBotToken.findById(id)
+            ?? await this.create(id);
     }   
 
     protected create(id: string) {

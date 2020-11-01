@@ -9,11 +9,14 @@ import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
 import { sendError, AuthUser } from '../../modules/api-utils';
 import { updateManageableBots, updateUser, validateBotManager, validateUser } from '../../modules/middleware';
+import { BotTokenDocument } from '../../../data/models/bot-token';
+import BotTokens from '../../../data/bot-tokens';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots),
-      logs = Deps.get<BotLogs>(BotLogs);
+      logs = Deps.get<BotLogs>(BotLogs),
+      tokens = Deps.get<BotTokens>(BotTokens);
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
@@ -36,7 +39,21 @@ router.post('/', updateUser, validateUser, async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.put('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.put('/:id(\d{18})/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await validateCanEdit(req, { botId: id });
+
+    const savedToken = await tokens.get(id);
+    savedToken.voteWebhookURL = req.body.voteWebhookURL;
+    await savedToken.save();
+
+    res.json({ code: 201, message: 'Success!' });
+  } catch (error) { sendError(res, 400, error); }  
+});
+
+router.put('/:id(\d{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -51,7 +68,7 @@ router.put('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotManag
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.delete('/:id([0-9]{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.delete('/:id(\d{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     await bots.delete(req.params.id);
 
@@ -80,7 +97,7 @@ async function validateCanCreate(req, res, id: string) {
   if (!userInGuild)
     throw new TypeError('You must be in the DBots Discord Server to post bots.');
 }
-async function validateCanEdit(req, listing: Listing) {
+async function validateCanEdit(req, listing: { botId: string }) {
   if (!req.body)
     throw new TypeError('Request body is empty.');
 
@@ -104,13 +121,15 @@ async function saveBotAndChanges(id: any, req: any) {
   return bots.save(savedBot);
 }
 
-export function sendLog(title: string, description: string, good = true) {
+export function sendLog(title: string, description: string, hexColor = HexColor.Blue) {
   return (bot.guilds.cache
     .get(config.guild.id)?.channels.cache
     .get(config.guild.logChannelId) as TextChannel)
-    ?.send(new MessageEmbed({
-      hexColor: '#' + (good ? '00FF00FF' : 'FF0000FF'),
-      description,
-      title
-    }));
+    ?.send(new MessageEmbed({ color: hexColor, description, title }));
+}
+
+export enum HexColor {
+  Blue = '#4287f5',
+  Green = '#42f54e',
+  Red = '#f54242'
 }

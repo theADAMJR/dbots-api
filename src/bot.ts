@@ -7,7 +7,7 @@ import EventsService from './services/events.service';
 import { API } from './api/server';
 import Log from './utils/log';
 
-export const bot = new Client({ partials: ['GUILD_MEMBER'] });
+export const bot = new Client();
 
 bot.login(config.bot.token);
 
