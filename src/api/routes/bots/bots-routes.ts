@@ -16,10 +16,10 @@ import { getWeek } from '../../../utils/command-utils';
 
 export const router = Router();
 
-const bots = Deps.get<Bots>(Bots),
-      botTokens = Deps.get<BotTokens>(BotTokens),
-      stats = Deps.get<Stats>(Stats),
-      users = Deps.get<Users>(Users);
+const bots = Deps.get<Bots>(Bots);
+const botTokens = Deps.get<BotTokens>(BotTokens);
+const stats = Deps.get<Stats>(Stats);
+const users = Deps.get<Users>(Users);
 
 router.get('/', async (req, res) => {
     try {
