@@ -1,10 +1,10 @@
 import { User } from 'discord.js';
 import { SavedUser, UserDocument } from './models/user';
 import DBWrapper from './db-wrapper';
-import { AuthUser } from '../api/modules/api-utils';
 
-export default class Users extends DBWrapper<User | AuthUser, UserDocument> {
-    protected async getOrCreate(user: User | AuthUser) {
+export default class Users extends DBWrapper<PartialUser, UserDocument> {
+    protected async getOrCreate(user: PartialUser) {
+        if (!user) return;
         if (user.bot)
             throw new TypeError(`Bots don't have accounts`);
 
@@ -12,11 +12,13 @@ export default class Users extends DBWrapper<User | AuthUser, UserDocument> {
         return savedUser ?? this.create(user);
     }
 
-    async delete(user: User | AuthUser) {
+    async delete(user: PartialUser) {
         return await SavedUser.findByIdAndDelete(user.id);
     }
 
-    protected async create(user: User | AuthUser) {
+    protected async create(user: PartialUser) {
         return new SavedUser({ _id: user.id }).save();
     }
 }
+
+export interface PartialUser { id: string, bot: boolean };

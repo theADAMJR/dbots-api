@@ -7,9 +7,8 @@ import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { sendError, AuthUser } from '../../modules/api-utils';
+import { sendError } from '../../modules/api-utils';
 import { updateManageableBots, updateUser, validateBotManager, validateUser } from '../../modules/middleware';
-import { BotTokenDocument } from '../../../data/models/bot-token';
 import BotTokens from '../../../data/bot-tokens';
 
 export const router = Router();
