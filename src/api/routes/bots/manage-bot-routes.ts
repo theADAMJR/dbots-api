@@ -38,7 +38,7 @@ router.post('/', updateUser, validateUser, async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.put('/:id(\d{18})/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.put('/:id/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -52,7 +52,7 @@ router.put('/:id(\d{18})/webhook', updateUser, updateManageableBots, validateBot
   } catch (error) { sendError(res, 400, error); }  
 });
 
-router.put('/:id(\d{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.put('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -67,7 +67,7 @@ router.put('/:id(\d{18})', updateUser, updateManageableBots, validateBotManager,
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.delete('/:id(\d{18})', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     await bots.delete(req.params.id);
 

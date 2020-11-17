@@ -40,4 +40,3 @@ Projects to Host Series - https://www.youtube.com/watch?v=ARkTLD_j2cM&list=PLGfT
 
 ### Redirect URIs
 - `http://localhost:3000/api/v1/auth` (locally)
-- `http://localhost:4200/dashboard` (locally)
