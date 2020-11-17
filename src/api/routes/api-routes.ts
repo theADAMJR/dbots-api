@@ -8,7 +8,7 @@ import { updateUser } from '../modules/middleware';
 
 export const router = Router();
 
-router.get('/', (req, res) => res.json({ elthre: 'hlao' }));
+router.get('/', (req, res) => res.json({ hello: 'earth' }));
 
 router.get('/auth', async (req, res) => {
   try {

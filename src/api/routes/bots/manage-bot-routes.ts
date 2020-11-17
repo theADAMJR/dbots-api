@@ -13,9 +13,9 @@ import BotTokens from '../../../data/bot-tokens';
 
 export const router = Router();
 
-const bots = Deps.get<Bots>(Bots),
-      logs = Deps.get<BotLogs>(BotLogs),
-      tokens = Deps.get<BotTokens>(BotTokens);
+const bots = Deps.get<Bots>(Bots);
+const logs = Deps.get<BotLogs>(BotLogs);
+const tokens = Deps.get<BotTokens>(BotTokens);
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {

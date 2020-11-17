@@ -11,7 +11,10 @@ const users = Deps.get<Users>(Users);
 
 router.get('/', updateUser, async (req, res) => {
     res.json({
-        user: res.locals.user,
+        user: {
+            ...res.locals.user,
+            displayAvatarURL: res.locals.user.displayAvatarURL
+        },
         saved: await users.get(res.locals.user)
     });
 });

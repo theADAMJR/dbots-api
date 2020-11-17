@@ -1,4 +1,3 @@
-import { User } from 'discord.js';
 import { SavedUser, UserDocument } from './models/user';
 import DBWrapper from './db-wrapper';
 
@@ -8,8 +7,8 @@ export default class Users extends DBWrapper<PartialUser, UserDocument> {
         if (user.bot)
             throw new TypeError(`Bots don't have accounts`);
 
-        const savedUser = await SavedUser.findById(user.id);
-        return savedUser ?? this.create(user);
+        return await SavedUser.findById(user.id)
+            ?? this.create(user);
     }
 
     async delete(user: PartialUser) {
