@@ -3,7 +3,7 @@ Bot for DBots.
 
 Projects to Host Series - https://www.youtube.com/watch?v=ARkTLD_j2cM&list=PLGfT2ttRbfiyyci-6_mmKaTA0-2qm_U6H&index=1
 
-**Dashboard**: https://github.com/theADAMJR/DBots
+**Website**: https://github.com/DBots-co/Website
 
 ![API](https://socialify.git.ci/DBots-co/API/image?description=1&descriptionEditable=API%20Routes%2FServer%20files%20for%20dbots.co&font=Source%20Code%20Pro&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars0.githubusercontent.com%2Fu%2F70011081%3Fs%3D200%26v%3D4&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
 
