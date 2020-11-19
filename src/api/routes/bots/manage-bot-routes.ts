@@ -23,7 +23,7 @@ router.post('/', updateUser, validateUser, async (req, res) => {
     const id = listing.botId;
     await validateCanCreate(req, res, id);
 
-    if (!bot.users.cache.get(id)?.bot)
+    if (bot.users.cache.has(id) && !bot.users.cache.get(id)?.bot)
       throw new TypeError('This user is not a bot.');
 
     const savedBot = await bots.get(id);
