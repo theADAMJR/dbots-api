@@ -43,10 +43,11 @@ router.post('/', updateUser, async (req, res) => {
   } catch (error) { sendError(res, 400, error); }
 });
 
-router.put('/:id', updateUser, async (req, res) => {
+router.patch('/:id', updateUser, async (req, res) => {
   try {
     const pack = await SavedBotPack.findById(req.params.id);
     pack.bots = req.body.bots;
+    pack.description = req.body.description;
     pack.updatedAt = new Date();
     await pack.updateOne(pack);    
   } catch (error) { sendError(res, 400, error); }

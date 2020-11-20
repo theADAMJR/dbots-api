@@ -6,15 +6,17 @@ export interface BotPackDocument extends Document {
   _id: string;
   bots: BotDocument[];
   createdAt: Date;
-  updatedAt: Date;
+  description: string;
   owner: UserDocument;
+  updatedAt: Date;
   votes: number;
 }
 
 export const SavedBotPack = model<BotPackDocument>('botPack', new Schema({
   _id: String,
-  createdAt: { type: Date, default: new Date() },
   bots: [{ type: String, ref: 'bot' }],
+  createdAt: { type: Date, default: new Date() },
+  description: String,
   owner: { type: String, ref: 'user' },
   updatedAt: { type: Date, default: new Date() },
   votes: Number
