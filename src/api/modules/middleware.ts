@@ -8,7 +8,7 @@ const bots = Deps.get<Bots>(Bots);
 export async function updateUser(req, res, next) {
   try {
     const key = req.get('Authorization');    
-    res.locals.user = await getUser(key);
+    res.locals.user ??= await getUser(key);
   } finally {
     return next();
   }
@@ -25,6 +25,20 @@ export async function updateManageableBots(req, res, next) {
 }
 
 export async function validateBotManager(req, res, next) {
+  try {
+    const key = req.get('Authorization');
+    if (!key)
+      throw new TypeError('Unauthorized.');
+  
+    const botFound = res.locals.bots.some(b => b.id === req.params.id)
+    if (!botFound)
+      throw TypeError('Bot not manageable.');
+  
+    return next();
+  } catch (err) { sendError(res, 400, err); }
+}
+
+export async function validatePackOwner(req, res, next) {
   try {
     const key = req.get('Authorization');
     if (!key)

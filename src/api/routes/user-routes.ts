@@ -11,10 +11,7 @@ const users = Deps.get<Users>(Users);
 
 router.get('/', updateUser, async (req, res) => {
     res.json({
-        user: {
-            ...res.locals.user,
-            displayAvatarURL: res.locals.user.displayAvatarURL
-        },
+        user: res.locals.user,
         saved: await users.get(res.locals.user)
     });
 });
@@ -22,6 +19,6 @@ router.get('/', updateUser, async (req, res) => {
 router.get('/:id', (req, res) => {
     try {        
         const user = bot.users.cache.get(req.params.id);
-        res.send(user);
+        res.json(user);
     } catch (error) { sendError(res, 400, error); }
 });
