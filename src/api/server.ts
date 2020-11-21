@@ -1,5 +1,5 @@
 import express from 'express';
-
+import config from '../../config.json';
 import cors from 'cors';
 import OAuthClient from '@2pg/oauth';
 import bodyParser from 'body-parser';
@@ -54,7 +54,7 @@ export class API {
             .status(200)
             .sendFile(`${dashboardPath}/index.html`));
 
-        const port = process.env.PORT || process.env.PORT || 3000;
+        const port = process.env.PORT || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
         
         this.stats.init();

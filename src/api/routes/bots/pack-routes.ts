@@ -49,7 +49,9 @@ router.patch('/:id', updateUser, async (req, res) => {
     pack.bots = req.body.bots;
     pack.description = req.body.description;
     pack.updatedAt = new Date();
-    await pack.updateOne(pack);    
+    await pack.updateOne(pack); 
+    
+    res.status(201).json(pack);
   } catch (error) { sendError(res, 400, error); }
 });
 
