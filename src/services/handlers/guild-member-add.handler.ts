@@ -6,8 +6,8 @@ export default class GuildMemberAddHandler implements EventHandler {
     on = 'guildMemberAdd';
 
     async invoke(member: GuildMember) {
-        const inCorrectGuild = member.guild.id === config.guild.id;
+        const inCorrectGuild = member.guild.id === process.env.GUILD_ID;
         if (member.user.bot && inCorrectGuild)
-            await member.roles.add(config.guild.botRoleId);
+            await member.roles.add(process.env.BOT_ROLE_ID);
     }
 }

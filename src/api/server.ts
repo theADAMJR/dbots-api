@@ -18,9 +18,9 @@ import SitemapGenerator from './modules/sitemap-generator';
 
 export const app = express();
 export const AuthClient = new OAuthClient({
-    id: config.bot.id,
-    secret: config.bot.secret,
-    redirectURI: `${config.api.url}/auth`,
+    id: process.env.BOT_ID,
+    secret: process.env.BOT_SECRET,
+    redirectURI: `${process.env.API_URL}/auth`,
     scopes: ['identify', 'guilds']
 });
 
@@ -54,7 +54,7 @@ export class API {
             .status(200)
             .sendFile(`${dashboardPath}/index.html`));
 
-        const port = process.env.PORT || config.api.port || 3000;
+        const port = process.env.PORT || process.env.PORT || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
         
         this.stats.init();

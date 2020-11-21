@@ -11,31 +11,23 @@ Projects to Host Series - https://www.youtube.com/watch?v=ARkTLD_j2cM&list=PLGfT
 1) Fork/download this respository
 2) `npm i` to install packages
 
-### Config
-`config.json` example:
-```
-{
-    "bot": {
-        "token": "",
-        "secret": "",
-        "ownerId": "218459216145285121",
-        "activity": "dbots.co",
-        "id": "533947001578979328"
-    },
-    "guild": {
-        "botRoleId": "723982260554039349",
-        "devRoleId": "",
-        "id": "531196495584821314",
-        "logChannelId": "724730682433077359"
-    },
-    "api": {
-        "url": "http://localhost:3000/api/v1",
-        "port": "3000",
-        "supportInvite": "uDTgxyg"
-    },
-    "dashboardURL": "http://localhost:4200",
-    "mongoURL": "mongodb://localhost/DBots"
-}
+### .env
+This file is used for storing private data and secrets.
+It must be created for the app to run correctly.
+`.env` example:
+```.env
+API_URL="http://localhost:3000/api/v1"
+BOT_ID="NTMzOTQ3MDAxNTc4OTc5MzI4.XDsK5Q.Fq1LOiPscusQSvNecRpUR81Ii3o"
+BOT_TOKEN="KL1gYYEee2TmR9xr4wdtM46mkaX5H1_R"
+BOT_SECRET="533947001578979328"
+BOT_OWNER_ID="218459216145285121"
+BOT_ROLE_ID="723982260554039349"
+DASHBOARD_URL="http://localhost:4200",
+DEV_ROLE_ID="761610131703463997"
+LOG_CHANNEL_ID="724730682433077359"
+GUILD_ID="531196495584821314"
+PORT="3000"
+MONGO_URI="mongodb://localhost/DBots"
 ```
 
 ### Redirect URIs

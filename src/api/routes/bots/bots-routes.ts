@@ -71,7 +71,7 @@ router.delete('/:id', updateUser, updateManageableBots, validateBotManager, asyn
         );
 
         await bot.guilds.cache
-            .get(config.guild.id)?.members.cache
+            .get(process.env.GUILD_ID)?.members.cache
             .get(id)
             ?.kick();
 

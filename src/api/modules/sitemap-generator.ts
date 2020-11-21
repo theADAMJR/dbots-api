@@ -75,7 +75,7 @@ export default class SitemapGenerator {
   
   getRootMap() {
     const xml = (arr: string[], routes = '/') => arr
-      .map(n => this.url(`${config.dashboardURL}${routes ?? '/'}${n}`))
+      .map(n => this.url(`${process.env.DASHBOARD_URL}${routes ?? '/'}${n}`))
       .join('');
 
     return this.template(
@@ -89,7 +89,7 @@ export default class SitemapGenerator {
     return this.template(savedBots
       .filter(sb => bot.users.cache.has(sb._id))
       .map(sg => this
-        .url(`${config.dashboardURL}/bots/${sg._id}`))
+        .url(`${process.env.DASHBOARD_URL}/bots/${sg._id}`))
         .join(''));
   }
 }

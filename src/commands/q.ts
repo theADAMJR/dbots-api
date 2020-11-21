@@ -11,8 +11,8 @@ export default class QCommand implements Command {
         const unapprovedBots = await SavedBot.find({ approvedAt: undefined });
         
         const action = (b: BotDocument) => !bot.users.cache.has(b.id)
-            ? `\`https://discord.com/oauth2/authorize?client_id=${b.id}&guild_id=${config.guild.id}&scope=bot\``
-            : `\`${config.dashboardURL}/bots/${b.id}\``;
+            ? `\`https://discord.com/oauth2/authorize?client_id=${b.id}&guild_id=${process.env.GUILD_ID}&scope=bot\``
+            : `\`${process.env.DASHBOARD_URL}/bots/${b.id}\``;
         
         const details = unapprovedBots
             .slice(0, 10)

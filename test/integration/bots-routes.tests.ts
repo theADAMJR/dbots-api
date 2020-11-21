@@ -25,7 +25,7 @@ describe('routes/api/bots', () => {
         
         body = {
             body: 'My name jeff 123',
-            botId: config.bot.id,
+            botId: process.env.BOT_ID,
             githubURL: '',
             invite: '1927uhsd',
             overview: 'The best bot the world has ever seen',

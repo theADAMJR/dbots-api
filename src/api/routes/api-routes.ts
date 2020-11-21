@@ -13,7 +13,7 @@ router.get('/', (req, res) => res.json({ hello: 'earth' }));
 router.get('/auth', async (req, res) => {
   try {
     const key = await AuthClient.getAccess(req.query.code.toString());
-    res.redirect(`${config.dashboardURL}/auth?key=${key}`);
+    res.redirect(`${process.env.DASHBOARD_URL}/auth?key=${key}`);
   } catch (error) { sendError(res, 400, error); }
 });
 
@@ -22,7 +22,7 @@ router.post('/error', updateUser, async(req, res) => {
     let user = res.locals.user ?? { id: 'N/A' };
     
     await bot.users.cache
-      .get(config.bot.ownerId)
+      .get(process.env.BOT_OWNER_ID)
       .send(new MessageEmbed({
         title: 'Dashboard Error',
         description: `**Message**: ${req.body.message}`,
@@ -32,6 +32,6 @@ router.post('/error', updateUser, async(req, res) => {
 });
 
 router.get('/login', (req, res) =>
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${config.bot.id}&redirect_uri=${config.api.url}/auth&response_type=code&scope=identify guilds&prompt=none`));
+  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${process.env.BOT_ID}&redirect_uri=${process.env.API_URL}/auth&response_type=code&scope=identify guilds&prompt=none`));
 
 router.get('*', (req, res) => sendError(res, 404, new TypeError('Not found.')));

@@ -80,9 +80,9 @@ router.delete('/:id', updateUser, updateManageableBots, validateBotManager, asyn
 
 function addDevRole(id: string) {
   return bot.guilds.cache
-      ?.get(config.guild.id).members.cache
+      ?.get(process.env.GUILD_ID).members.cache
       .get(id)?.roles
-      .add(config.guild.devRoleId, 'Added bot.');
+      .add(process.env.DEV_ROLE_ID, 'Added bot.');
 }
 
 async function validateCanCreate(req, res, id: string) {
@@ -94,7 +94,7 @@ async function validateCanCreate(req, res, id: string) {
     throw new TypeError('Bot already exists!');
 
   const userInGuild = bot.guilds.cache
-    .get(config.guild.id).members.cache
+    .get(process.env.GUILD_ID).members.cache
     .has(res.locals.user.id);
   if (!userInGuild)
     throw new TypeError('You must be in the DBots Discord Server to post bots.');
@@ -125,8 +125,8 @@ async function saveBotAndChanges(id: any, req: any) {
 
 export function sendLog(title: string, description: string, hexColor = HexColor.Blue) {
   return (bot.guilds.cache
-    .get(config.guild.id)?.channels.cache
-    .get(config.guild.logChannelId) as TextChannel)
+    .get(process.env.GUILD_ID)?.channels.cache
+    .get(process.env.LOG_CHANNEL_ID) as TextChannel)
     ?.send(new MessageEmbed({ color: hexColor, description, title }));
 }
 

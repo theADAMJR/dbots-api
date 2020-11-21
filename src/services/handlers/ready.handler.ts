@@ -20,9 +20,9 @@ export default class ReadyHandler implements EventHandler {
 
         await bot.user.setPresence({
             activity: {
-                name: config.bot.activity,
+                name: 'dbots.co',
                 type: 'WATCHING',
-                url: config.dashboardURL
+                url: process.env.DASHBOARD_URL
             }            
         });
 
