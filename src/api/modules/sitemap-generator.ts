@@ -1,6 +1,6 @@
 import Deps from '../../utils/deps';
 import { bot } from '../../bot';
-import config from '../../../config.json';
+
 import Bots from '../../data/bots';
 
 export default class SitemapGenerator {

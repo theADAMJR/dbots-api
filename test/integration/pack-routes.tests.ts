@@ -16,10 +16,8 @@ describe('/src/api/routes/pack-routes', () => {
 
   after(async() => {
     Deps.get<API>(API);
-
-    pack = new SavedBotPack();
-    pack._id = 'testing123';
-    await pack.save();
+    
+    await pack.remove();
   });
 
   describe('GET /packs', () => {

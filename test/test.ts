@@ -1,7 +1,18 @@
 import { config } from 'dotenv';
-config();
+config({ path: 'test/.env' });
+console.log(process.env.MONGO_URI);
 
 import { connect } from 'mongoose';
-connect(process.env.MONGO_URI)
 
-import './integration/pack-routes.tests';
+describe('start', async() => {
+  before(async() => {
+    
+    await connect(process.env.MONGO_URI, {
+      useFindAndModify: true,
+      useUnifiedTopology: true,
+      useNewUrlParser: true
+    });
+  });
+    
+  await import('./integration/pack-routes.tests');
+})

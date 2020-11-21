@@ -6,7 +6,7 @@ import { sendError, validateIfCanVote } from '../../modules/api-utils';
 import { SavedBot, Vote } from '../../../data/models/bot';
 import Users from '../../../data/users';
 import { HexColor, sendLog } from './manage-bot-routes';
-import config from '../../../../config.json';
+
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 import Stats from '../../modules/stats';
 import BotTokens from '../../../data/bot-tokens';

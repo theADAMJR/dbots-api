@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AuthClient } from '../server';
-import config from '../../../config.json';
+
 import { bot } from '../../bot';
 import { MessageEmbed } from 'discord.js';
 import { sendError } from '../modules/api-utils';

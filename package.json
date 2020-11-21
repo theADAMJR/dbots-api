@@ -1,12 +1,10 @@
 {
   "name": "dbots",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Best Discord bot list",
   "main": "bot.js",
   "scripts": {
-    "test": "ts-mocha tests/**/**/*.tests.ts",
-    "test:u": "ts-mocha tests/unit/*.tests.ts",
-    "test:i": "ts-mocha tests/integration/*.tests.ts",
+    "test": "ts-mocha test/test.ts",
     "start": "ts-node src/bot.ts",
     "dev": "ts-node-dev src/bot.ts",
     "watch": "tsc --watch",

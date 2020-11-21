@@ -1,7 +1,7 @@
 import { bot } from '../bot';
 import { BotDocument, SavedBot } from '../data/models/bot';
 import { Command, CommandContext, Permission } from './command';
-import config from '../../config.json';
+
 
 export default class QCommand implements Command {
     name = 'q';

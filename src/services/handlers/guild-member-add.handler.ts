@@ -1,6 +1,6 @@
 import EventHandler from './event-handler';
 import { GuildMember } from 'discord.js';
-import config from '../../../config.json';
+
 
 export default class GuildMemberAddHandler implements EventHandler {
     on = 'guildMemberAdd';

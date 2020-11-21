@@ -1,4 +1,3 @@
-import config from '../../config.json';
 import Deps from '../../src/utils/deps';
 import Bots from '../../src/data/bots';
 import { API, app } from '../../src/api/server';

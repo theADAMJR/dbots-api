@@ -1,5 +1,5 @@
 import express from 'express';
-import config from '../../config.json';
+
 import cors from 'cors';
 import OAuthClient from '@2pg/oauth';
 import bodyParser from 'body-parser';
