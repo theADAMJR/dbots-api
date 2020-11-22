@@ -1,5 +1,4 @@
 import express from 'express';
-import config from '../../config.json';
 import cors from 'cors';
 import OAuthClient from '@2pg/oauth';
 import bodyParser from 'body-parser';
@@ -8,13 +7,14 @@ import Log from '../utils/log';
 import Deps from '../utils/deps';
 import Stats from './modules/stats';
 import { resolve } from 'path';
+import SitemapGenerator from './modules/sitemap-generator';
 
 import { router as apiRoutes } from './routes/api-routes';
 import { router as botsRoutes } from './routes/bots/bots-routes';
 import { router as manageBotRoutes } from './routes/bots/manage-bot-routes';
 import { router as statsRoutes } from './routes/bots/stats-routes';
 import { router as userRoutes } from './routes/user-routes';
-import SitemapGenerator from './modules/sitemap-generator';
+import { router as packRoutes } from './routes/pack-routes';
 
 export const app = express();
 export const AuthClient = new OAuthClient({
@@ -43,6 +43,7 @@ export class API {
             app.get('/bots', (req,res) => res.redirect('/'));
             
         app.use('/api/v1/user', userRoutes);
+        app.use('/api/v1/packs', packRoutes);
         app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
         app.use('/api/v1/bots/:id', statsRoutes);
         app.use('/api/v1', apiRoutes);

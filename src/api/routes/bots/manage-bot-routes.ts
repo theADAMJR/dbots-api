@@ -38,7 +38,7 @@ router.post('/', updateUser, validateUser, async (req, res) => {
     catch {}
 
     res.status(201).json(savedBot);
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 router.put('/:id/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -52,7 +52,7 @@ router.put('/:id/webhook', updateUser, updateManageableBots, validateBotManager,
     await savedToken.save();
 
     res.json({ code: 201, message: 'Success!' });
-  } catch (error) { sendError(res, 400, error); }  
+  } catch (error) { sendError(res, error); }  
 });
 
 router.put('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -67,7 +67,7 @@ router.put('/:id', updateUser, updateManageableBots, validateBotManager, async (
     await sendLog('Bot Edited', `<@!${savedBot.ownerId}> edited <@!${id}>.`);
 
     res.json(savedBot);
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -75,7 +75,7 @@ router.delete('/:id', updateUser, updateManageableBots, validateBotManager, asyn
     await bots.delete(req.params.id);
 
     res.json({ code: 200, message: 'Success' });
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 function addDevRole(id: string) {

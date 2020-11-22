@@ -22,21 +22,21 @@ router.post('/stats', async (req, res) => {
     await savedBot.save();    
 
     res.json({ success: true });
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 router.get('/log', updateUser, updateManageableBots, validateBotManager, async(req, res) => {
   try {
     const log = await logs.get(req.params.id);
     res.json(log);
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 router.get('/token', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const { token } = await botTokens.get(req.params.id);
     res.json(token);
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });
 
 router.get('/token/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -47,5 +47,5 @@ router.get('/token/regen', updateUser, updateManageableBots, validateBotManager,
     const { token } = await botTokens.get(id);
 
     res.json(token);
-  } catch (error) { sendError(res, 400, error); }
+  } catch (error) { sendError(res, error); }
 });

@@ -1,8 +1,8 @@
 import { AuthClient } from '../server';
 import { UserDocument } from '../../data/models/user';
 
-export function sendError(res: any, code: number, error: Error) {
-  return res.status(code).json({ code, message: error?.message });
+export function sendError(res: any, { message, status }: APIError) {
+  return res.status(status ?? 400).json({ code: status, message });
 }
 
 export async function getUser(key: any) {
@@ -21,4 +21,12 @@ export function validateIfCanVote(savedVoter: UserDocument) {
 
 export interface BotStats {
   guildCount: number;
+}
+
+export class APIError extends Error {
+  constructor(
+    message: string,
+    public readonly status = 400) {
+    super(message);
+  }
 }

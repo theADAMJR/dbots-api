@@ -20,5 +20,5 @@ router.get('/:id', (req, res) => {
     try {        
         const user = bot.users.cache.get(req.params.id);
         res.json(user);
-    } catch (error) { sendError(res, 400, error); }
+    } catch (error) { sendError(res, error); }
 });
