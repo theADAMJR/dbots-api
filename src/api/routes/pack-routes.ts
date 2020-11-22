@@ -58,13 +58,8 @@ router.patch('/:id', updateUser, validateUser, async (req, res) => {
 
 router.delete('/:id', updateUser, validateUser, async (req, res) => {
   try {
-    const pack = await SavedBotPack.findById(req.params.id);
-    pack.bots = req.body.bots;
-    pack.description = req.body.description;
-    pack.updatedAt = new Date();
-    await pack.updateOne(pack); 
-    
-    res.status(200).json(pack);
+    await SavedBotPack.deleteOne({ _id: req.params.id });
+    res.status(200);
   } catch (error) { sendError(res, error); }
 });
 
