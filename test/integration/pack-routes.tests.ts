@@ -3,14 +3,17 @@ import request from 'supertest';
 import { app } from '../../src/api/server';
 import { BotPackDocument, SavedBotPack } from '../../src/data/models/bot-pack';
 import { getObj } from '../test-utils';
+import '../mocks';
 
 describe('/src/api/routes/pack-routes', () => {
   let pack: BotPackDocument;
   const endpoint = `/api/v1`;
+  const key = '120912378197uyh9ryqh482yg1b4213';
 
   before(async() => {
     pack = new SavedBotPack();
     pack._id = 'testing123';
+    pack.owner = 'test_user_123' as any;
     await pack.save();
   });
 
@@ -19,13 +22,16 @@ describe('/src/api/routes/pack-routes', () => {
   });
 
   describe('POST /packs', () => {
-    const pack = new SavedBotPack();
-
-    it('pack is created', (done) => {
+    it('duplicate id pack is created, name is changed', (done) => {
       request(app)
         .post(`${endpoint}/packs`)
+        .set({ Authorization: key })
+        .send(pack)
         .expect(201)
-        .expect([getObj(pack)])
+        .expect(res => assert(
+          res.body._id.startsWith(pack._id),
+          'Pack name should be unique.'
+        ))
         .end(done);
     });
   });

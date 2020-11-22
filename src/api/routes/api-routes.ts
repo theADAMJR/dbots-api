@@ -1,10 +1,16 @@
+import fs from 'fs';
 import { Router } from 'express';
+import { promisify } from 'util';
+import { resolve } from 'path';
 import { AuthClient } from '../server';
-
-import { bot } from '../../bot';
-import { MessageEmbed } from 'discord.js';
 import { APIError, sendError } from '../modules/api-utils';
 import { updateUser } from '../modules/middleware';
+
+const appendFile = promisify(fs.appendFile);
+const dashboardLogsPath = resolve('./logs/dashboard');
+const sessionDate = new Date()
+  .toISOString()
+  .replace(/:/g, '');
 
 export const router = Router();
 
@@ -17,18 +23,13 @@ router.get('/auth', async (req, res) => {
   } catch (error) { sendError(res, error); }
 });
 
-router.post('/error', updateUser, async(req, res) => {
+router.post('/error', async (req, res) => {
   try {
-    let user = res.locals.user ?? { id: 'N/A' };
-    
-    await bot.users.cache
-      .get(process.env.BOT_OWNER_ID)
-      .send(new MessageEmbed({
-        title: 'Dashboard Error',
-        description: `**Message**: ${req.body.message}`,
-        footer: { text: `User ID: ${user.id}` }
-      }));
-    } catch (error) { sendError(res, error); }
+    await appendFile(
+      `${dashboardLogsPath}/${sessionDate}.log`,
+      req.body.message + '\n'
+    );
+  } catch (error) { sendError(res, error); }
 });
 
 router.get('/login', (req, res) =>

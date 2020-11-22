@@ -28,9 +28,9 @@ router.get('/:id', async (req, res) => {
   } catch (error) { sendError(res, error); }
 });
 
-router.post('/', updateUser, async (req, res) => {
+router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    let name = req.body.name.replace(/ /g, '-');
+    let name = req.body.name?.replace(/ /g, '-');
     const nameExists = await SavedBotPack.exists({ _id: name });
     if (nameExists) {
       name += Math
@@ -39,7 +39,7 @@ router.post('/', updateUser, async (req, res) => {
         .padStart(6, '0')
     }
 
-    const pack = await SavedBotPack.create({ _id: name, ...req.body });
+    const pack = await SavedBotPack.create({ ...req.body, _id: name });
     res.status(201).json(pack);
   } catch (error) { sendError(res, error); }
 });
