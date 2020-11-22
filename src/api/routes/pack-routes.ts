@@ -30,16 +30,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    let name = req.body.name?.replace(/ /g, '-');
-    const nameExists = await SavedBotPack.exists({ _id: name });
+    let _id = req.body._id?.replace(/ /g, '-');
+    const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
-      name += Math
+      _id += '-' + Math
         .floor(Math.random() * 999999)
         .toString()
         .padStart(6, '0')
     }
 
-    const pack = await SavedBotPack.create({ ...req.body, _id: name });
+    const pack = await SavedBotPack.create({ ...req.body, _id });
     res.status(201).json(pack);
   } catch (error) { sendError(res, error); }
 });
@@ -67,6 +67,9 @@ router.get('/:id/vote', updateUser, validateUser, async (req, res) => {
   try {
     const savedUser = await users.get(res.locals.user);
     validateCanVote(savedUser);
+    
+    savedUser.lastVotedAt = new Date();
+    savedUser.save();
 
     const pack = await SavedBotPack.findById(req.params.id);
     pack.votes++;

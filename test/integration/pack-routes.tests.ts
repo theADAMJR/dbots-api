@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import request from 'supertest';
 import { app } from '../../src/api/server';
 import { BotPackDocument, SavedBotPack } from '../../src/data/models/bot-pack';
-import { getObj } from '../test-utils';
+import { SavedUser } from '../../src/data/models/user';
 import '../mocks';
 
 describe('/src/api/routes/pack-routes', () => {
@@ -21,6 +21,18 @@ describe('/src/api/routes/pack-routes', () => {
     await pack.remove();
   });
 
+  describe('GET /packs', () => {
+    it('sends array of packs', (done) => {
+      request(app)
+        .get(`${endpoint}/packs`)
+        .expect(200)
+        .expect(res => assert(
+          Array.isArray(res.body),
+          'Response body should be of type array.'))
+        .end(done);
+    });
+  });
+
   describe('POST /packs', () => {
     it('duplicate id pack is created, name is changed', (done) => {
       request(app)
@@ -36,16 +48,6 @@ describe('/src/api/routes/pack-routes', () => {
     });
   });
 
-  describe('GET /packs', () => {
-    it('sends array of packs', (done) => {
-      request(app)
-        .get(`${endpoint}/packs`)
-        .expect(200)
-        .expect([getObj(pack)])
-        .end(done);
-    });
-  });
-
   describe('PATCH /packs/:id', () => {
     it('sends updated pack', (done) => {
       pack.description = 'Updated bot pack.';
@@ -53,21 +55,52 @@ describe('/src/api/routes/pack-routes', () => {
       request(app)
         .patch(`${endpoint}/packs/${pack.id}`)
         .send(pack)
+        .set({ Authorization: key })
+        .expect(200)
         .expect(res => assert(
           res.body.updatedAt !== pack.updatedAt
           && res.body.description === pack.description,
           'Sent pack should be updated.'
         ))
-        .expect(200)
         .end(done);
     });
   });
 
+  describe('DELETE /packs', () => {
+    it('deletes pack id', async () => {
+      request(app)
+        .delete(`${endpoint}/packs/${pack.id}`)
+        .set({ Authorization: key })
+        .expect(200);
+
+      assert(
+        !await SavedBotPack.exists(pack),
+        'Pack should no longer exist.'
+      );
+    });
+  });
+
   describe('GET /packs/:id/vote', () => {
-    it('user not logged in, unauthorized', (done) => {
+    it('pack votes increased by 1', async () => {
+      const savedUser = await SavedUser.findById('test_user_123');
+      savedUser.lastVotedAt = null;
+      await savedUser.save();
+
+      return request(app)
+        .get(`${endpoint}/packs/${pack.id}/vote`)
+        .set({ Authorization: key })
+        .expect(200)
+        .expect(res => assert(
+          res.body.votes === pack.votes + 1,
+          'Votes should be increased by 1.'
+        ));
+    });
+
+    it('user already voted, status 400', (done) => {
       request(app)
         .get(`${endpoint}/packs/${pack.id}/vote`)
-        .expect(401)
+        .set({ Authorization: key })
+        .expect(400)
         .end(done);
     });
   });

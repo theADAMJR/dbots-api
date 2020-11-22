@@ -6,6 +6,7 @@ AuthClient.getUser = async (key: string) => {
 
   return {
     id: 'test_user_123',
-    username: 'ADAMJR'
+    username: 'ADAMJR',
+    bot: false
   } as any;
 };

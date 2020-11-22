@@ -19,5 +19,5 @@ export const SavedBotPack = model<BotPackDocument>('botPack', new Schema({
   description: String,
   owner: { type: String, ref: 'user' },
   updatedAt: { type: Date, default: new Date() },
-  votes: Number
+  votes: { type: Number, default: 0 }
 }));

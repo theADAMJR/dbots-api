@@ -4,7 +4,6 @@ import { promisify } from 'util';
 import { resolve } from 'path';
 import { AuthClient } from '../server';
 import { APIError, sendError } from '../modules/api-utils';
-import { updateUser } from '../modules/middleware';
 
 const appendFile = promisify(fs.appendFile);
 const dashboardLogsPath = resolve('./logs/dashboard');
