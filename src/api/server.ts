@@ -40,8 +40,6 @@ export class API {
         app.get('/api/v1/sitemaps/bots.xml', (req, res) =>
             res.set('Content-Type', 'text/xml').send(this.botsSitemap));
             
-            app.get('/bots', (req,res) => res.redirect('/'));
-            
         app.use('/api/v1/user', userRoutes);
         app.use('/api/v1/bots', botsRoutes, manageBotRoutes);
         app.use('/api/v1/bots/:id', statsRoutes);
