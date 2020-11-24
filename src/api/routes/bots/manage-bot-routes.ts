@@ -7,8 +7,8 @@ import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { sendError } from '../../modules/api-utils';
-import { updateManageableBots, updateUser, validateBotManager, validateUser } from '../../modules/middleware';
+import { APIError, apiResponse, sendError } from '../../modules/api-utils';
+import { updateManageableBots, updateUser, validateBotExists, validateBotExistsFromBody, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import BotTokens from '../../../data/bot-tokens';
 
 export const router = Router();
@@ -17,13 +17,13 @@ const bots = Deps.get<Bots>(Bots);
 const logs = Deps.get<BotLogs>(BotLogs);
 const tokens = Deps.get<BotTokens>(BotTokens);
 
-router.post('/', updateUser, validateUser, async (req, res) => {
+router.post('/', updateUser, validateUser, validateCanCreate, async (req, res) => {
   try {
     const listing: Listing = req.body;
     const id = listing.botId;
-    await validateCanCreate(req, res, id);
 
-    if (bot.users.cache.has(id) && !bot.users.cache.get(id)?.bot)
+    const user = bot.users.cache.get(id)
+    if (user && !user.bot)
       throw new TypeError('This user is not a bot.');
 
     const savedBot = await bots.get(id);
@@ -41,13 +41,45 @@ router.post('/', updateUser, validateUser, async (req, res) => {
   } catch (error) { sendError(res, error); }
 });
 
-router.patch('/:id/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.patch('/:id',
+  updateUser, updateManageableBots, validateBotManager, validateBotExists,
+  async (req, res) => {
+  try {
+    const id = req.params.id;
+    const savedBot = await saveBotAndChanges(id, req);
+    await sendLog('Bot Edited', `<@!${savedBot.ownerId}> edited <@!${id}>.`);
+
+    res.json(savedBot);
+  } catch (error) { sendError(res, error); }
+});
+
+router.delete('/:id',
+  updateUser, updateManageableBots, validateBotManager, validateBotExistsFromBody,
+  async (req, res) => {
   try {
     const id = req.params.id;
 
-    await validateCanEdit(req, { botId: id });
+    await bots.delete(id);
+    await sendLog(
+      `Bot Deleted`,
+      `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
+      HexColor.Red
+    );
 
-    const savedToken = await tokens.get(id);
+    await bot.guilds.cache
+      .get(process.env.GUILD_ID)?.members.cache
+      .get(id)
+      ?.kick();
+
+    res.json({ code: 200, message: 'Success!' });
+  } catch (error) { sendError(res, error); }
+});
+
+router.patch('/:id/webhook',
+  updateUser, updateManageableBots, validateBotExistsFromBody, validateBotManager,
+  async (req, res) => {
+  try {
+    const savedToken = await tokens.get(req.params.id);
     savedToken.voteWebhookURL = req.body.voteWebhookURL;
     await savedToken.save();
 
@@ -55,69 +87,11 @@ router.patch('/:id/webhook', updateUser, updateManageableBots, validateBotManage
   } catch (error) { sendError(res, error); }  
 });
 
-router.patch('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const listing: Listing = req.body;
-    await validateCanEdit(req, listing);
-
-    let savedBot = await saveBotAndChanges(id, req);
-
-    await sendLog('Bot Edited', `<@!${savedBot.ownerId}> edited <@!${id}>.`);
-
-    res.json(savedBot);
-  } catch (error) { sendError(res, error); }
-});
-
-router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    await bots.delete(id);
-    await sendLog(
-        `Bot Deleted`,
-        `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
-        HexColor.Red
-    );
-
-    await bot.guilds.cache
-        .get(process.env.GUILD_ID)?.members.cache
-        .get(id)
-        ?.kick();
-
-    res.json({ code: 200, message: 'Success!' });
-  } catch (error) { sendError(res, error); }
-});
-
-function addDevRole(id: string) {
+function addDevRole(userId: string) {
   return bot.guilds.cache
-      ?.get(process.env.GUILD_ID).members.cache
-      .get(id)?.roles
-      .add(process.env.DEV_ROLE_ID, 'Added bot.');
-}
-
-async function validateCanCreate(req, res, id: string) {
-  if (!req.body)
-    throw new TypeError('Request body is empty.');
-
-  const exists = await bots.exists(id);
-  if (exists)
-    throw new TypeError('Bot already exists!');
-
-  const userInGuild = bot.guilds.cache
-    .get(process.env.GUILD_ID).members.cache
-    .has(res.locals.user.id);
-  if (!userInGuild)
-    throw new TypeError('You must be in the DBots Discord Server to post bots.');
-}
-async function validateCanEdit(req, listing: { botId: string }) {
-  if (!req.body)
-    throw new TypeError('Request body is empty.');
-
-  const exists = await bots.exists(listing.botId);
-  if (!exists)
-    throw new TypeError('Bot does not exist.');
+    ?.get(process.env.GUILD_ID).members.cache
+    .get(userId)?.roles
+    .add(process.env.DEV_ROLE_ID, 'Added bot.');
 }
 
 async function saveBotAndChanges(id: any, req: any) {

@@ -1,5 +1,7 @@
 import { bot } from '../../bot';
 import Bots from '../../data/bots';
+import { SavedBot } from '../../data/models/bot';
+import { SavedBotPack } from '../../data/models/bot-pack';
 import Deps from '../../utils/deps';
 import {  APIError, getUser, sendError } from './api-utils';
 
@@ -57,4 +59,39 @@ export async function validateUser(req, res, next) {
   return (res.locals.user)
     ? next()
     : res.status(401).json({ code: 401, message: 'Unauthorized' });
+}
+
+export async function validateCanCreate(req, res, next) {
+  const exists = await bots.exists(req.params.id);
+  if (exists)
+    return sendError(res, new APIError('Bot already exists.', 400));
+
+  const userInGuild = bot.guilds.cache
+    .get(process.env.GUILD_ID)?.members.cache
+    .has(res.locals.user.id);
+  return (userInGuild)
+    ? next()
+    : sendError(res, new APIError('You must be in the DBots Discord Server to post bots.', 401)); 
+}
+
+export async function validateBotExistsFromBody(req, res, next) {
+  const exists = await bots.exists(req.body.botId);
+  return (exists)
+    ? next()
+    : sendError(res, new APIError('Bot does not exist.', 404));
+}
+
+export async function validatePackExists(req, res, next) {
+  const exists = await SavedBotPack.exists({ _id: req.params.id });
+  return (exists)
+    ? next()
+    : sendError(res, new APIError('Bot pack does not exist.', 404));
+}
+
+
+export async function validateBotExists(req, res, next) {
+  const exists = await SavedBot.exists({ _id: req.params.id });
+  return (exists)
+    ? next()
+    : sendError(res, new APIError('Bot does not exist.', 404));
 }

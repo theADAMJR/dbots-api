@@ -5,12 +5,11 @@ import Bots from '../../../data/bots';
 import { sendError, validateIfCanVote } from '../../modules/api-utils';
 import { SavedBot, Vote } from '../../../data/models/bot';
 import Users from '../../../data/users';
-import { HexColor, sendLog } from './manage-bot-routes';
 
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
 import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
-import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
+import { updateManageableBots, updateUser } from '../../modules/middleware';
 import { getWeek } from '../../../utils/command-utils';
 
 export const router = Router();

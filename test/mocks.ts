@@ -17,7 +17,8 @@ bot.users.cache = new Collection([
   [
     'bot_user_123', {
       id: 'bot_user_123',
-      username: '4PG'
+      username: '4PG',
+      displayAvatarURL: (...args) => ''
     } as any
   ]
 ]);
