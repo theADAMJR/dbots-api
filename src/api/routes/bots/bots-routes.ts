@@ -8,7 +8,6 @@ import Users from '../../../data/users';
 import { HexColor, sendLog } from './manage-bot-routes';
 
 import { BotWidgetGenerator } from '../../modules/image/bot-widget-generator';
-import Stats from '../../modules/stats';
 import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
 import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
@@ -58,26 +57,6 @@ router.get('/:id', (req, res) => {
     } catch (error) { sendError(res, error); }
 });
 
-router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
-    try {
-        const id = req.params.id;
-
-        await bots.delete(id);
-        await sendLog(
-            `Bot Deleted`,
-            `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
-            HexColor.Red
-        );
-
-        await bot.guilds.cache
-            .get(process.env.GUILD_ID)?.members.cache
-            .get(id)
-            ?.kick();
-
-        res.json({ success: true });
-    } catch (error) { sendError(res, error); }
-});
-
 router.get('/:id/vote', updateUser, async (req, res) => {
     try {
         const id = req.params.id;
@@ -104,17 +83,6 @@ router.get('/:id/vote', updateUser, async (req, res) => {
     } catch (error) { sendError(res, error); }
 });
 
-async function postVoteWebhook(id: string, vote: Vote) {
-    const savedToken = await botTokens.get(id);
-    try {
-        await fetch(savedToken.voteWebhookURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(vote)
-        });
-    } catch {}
-}
-
 router.get('/:id/saved', async (req, res) => {
     try {
         const savedBot = await bots.get(req.params.id);
@@ -132,3 +100,14 @@ router.get('/:id/widget', async (req, res) => {
         res.set({ 'Content-Type': 'image/png' }).send(image);
     } catch (error) { sendError(res, error); }
 });
+
+async function postVoteWebhook(id: string, vote: Vote) {
+    const savedToken = await botTokens.get(id);
+    try {
+        await fetch(savedToken.voteWebhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(vote)
+        });
+    } catch {}
+}

@@ -41,7 +41,7 @@ router.post('/', updateUser, validateUser, async (req, res) => {
   } catch (error) { sendError(res, error); }
 });
 
-router.put('/:id/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.patch('/:id/webhook', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -72,9 +72,21 @@ router.patch('/:id', updateUser, updateManageableBots, validateBotManager, async
 
 router.delete('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
-    await bots.delete(req.params.id);
+    const id = req.params.id;
 
-    res.json({ code: 200, message: 'Success' });
+    await bots.delete(id);
+    await sendLog(
+        `Bot Deleted`,
+        `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
+        HexColor.Red
+    );
+
+    await bot.guilds.cache
+        .get(process.env.GUILD_ID)?.members.cache
+        .get(id)
+        ?.kick();
+
+    res.json({ code: 200, message: 'Success!' });
   } catch (error) { sendError(res, error); }
 });
 

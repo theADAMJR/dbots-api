@@ -2,7 +2,6 @@ import { LogDocument, SavedLog } from '../../src/data/models/log';
 import Stats from '../../src/api/modules/stats';
 import Logs from '../../src/data/bot-logs';
 import { mock } from 'ts-mockito';
-import { expect } from 'chai';
 
 describe('api/modules/stats', () => {
   let savedLog: LogDocument;
@@ -13,7 +12,7 @@ describe('api/modules/stats', () => {
     logs.getAll = (): any => [savedLog];
 
     savedLog = new SavedLog();
-    stats = new Stats(logs);
+    stats = new Stats();
     
     savedLog.changes.push(
       {

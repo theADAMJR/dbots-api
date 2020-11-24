@@ -1,22 +1,8 @@
 import { model, Schema, Document } from 'mongoose';
 
-export class XPCard {
-    backgroundURL = '';
-    primary = '';
-    secondary = '';
-    tertiary = '';
-}
-
-const userSchema = new Schema({
-    _id: String,
-    banned: Boolean,
-    lastVotedAt: Date,
-    premium: Boolean,
-    role: String
-});
-
 export interface UserDocument extends Document {
     _id: string;
+    badges: DevBadge[];
     banned: boolean;
     lastVotedAt: Date;
     premium: boolean;
@@ -24,5 +10,17 @@ export interface UserDocument extends Document {
 }
 
 export type UserRole = '' | 'reviewer' | 'admin';
+export enum DevBadge {
+    BetaTester = 'BETA_TESTER',
+    OG = 'OG',
+    Viewer = 'VIEWER'
+}
 
-export const SavedUser = model<UserDocument>('user', userSchema);
+export const SavedUser = model<UserDocument>('user', new Schema({
+    _id: String,
+    badges: { type: Array, default: [] },
+    banned: Boolean,
+    lastVotedAt: Date,
+    premium: Boolean,
+    role: String
+}));

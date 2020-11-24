@@ -24,25 +24,29 @@
       "description": "Bot Token from https://discord.com/developers.",    
       "value": ""
     },
-    "BOT_ROLE_ID": {
-      "description": "ID of the bot role, given to bots that join the guild.",    
-      "value": ""
-    },
     "DASHBOARD_URL": {
       "description": "The Website URL [https://<heroku_app_name>/herokuapp.com]",    
       "value": "https://<heroku_app_name>/herokuapp.com"
     },
-    "DEV_ROLE_ID": {
-      "description": "ID of the developer role, in the bot list guild.",    
-      "value": ""
-    },
     "GUILD_ID": {
       "description": "ID of the guild for the bot list.",    
-      "value": ""
+      "value": "",
+      "required": false
     },
     "LOG_CHANNEL_ID": {
       "description": "ID of the log channel, in the bot list guild.",    
-      "value": ""
+      "value": "",
+      "required": false
+    },
+    "DEV_ROLE_ID": {
+      "description": "ID of the developer role, in the bot list guild.",    
+      "value": "",
+      "required": false
+    },
+    "BOT_ROLE_ID": {
+      "description": "ID of the bot role, given to bots that join the guild.",    
+      "value": "",
+      "required": false
     },
     "MONGO_URI": {
       "description": "The MongoDB URI to your database [i.e. from MongoDB Atlas].",

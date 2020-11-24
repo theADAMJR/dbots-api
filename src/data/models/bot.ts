@@ -24,7 +24,25 @@ export interface Vote {
     by: string;
 }
 
-const botSchema = new Schema({
+export enum BotBadge {
+    Featured = 'FEATURED'
+}
+
+export interface BotDocument extends Document {
+    _id: string;
+    approvedAt: Date;
+    badges: BotBadge[];
+    createdAt: Date;
+    feedback: Feedback[];
+    listing: Listing;
+    ownerId: string;
+    stats: { guildCount: number },
+    totalVotes: number;
+    lastVoteAt: Date;
+    votes: Vote[];
+}
+
+export const SavedBot = model<BotDocument>('bot', new Schema({
     _id: String,
     approvedAt: Date,
     badges: { type: Array, default: [] },
@@ -36,20 +54,4 @@ const botSchema = new Schema({
     totalVotes: { type: Number, default: 0 },
     lastVoteAt: Date,
     votes: { type: Array, default: [] }
-});
-
-export interface BotDocument extends Document {
-    _id: string;
-    approvedAt: Date;
-    badges: string[];
-    createdAt: Date;
-    feedback: Feedback[];
-    listing: Listing;
-    ownerId: string;
-    stats: { guildCount: number },
-    totalVotes: number;
-    lastVoteAt: Date;
-    votes: Vote[];
-}
-
-export const SavedBot = model<BotDocument>('bot', botSchema);
+}));

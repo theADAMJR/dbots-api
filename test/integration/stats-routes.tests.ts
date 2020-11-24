@@ -24,6 +24,7 @@ describe('/src/api/routes/bots/stats-routes', () => {
       votes: []
     });
 
+    await SavedLog.create({ _id: savedBot.id });
     savedToken = await SavedBotToken.create({ _id: savedBot._id, token: apiKey });
   });
 
@@ -75,10 +76,13 @@ describe('/src/api/routes/bots/stats-routes', () => {
   describe('GET /log', () => {
     it('get bot log, sends bot log', (done) => {
       request(app)
-        .get(`${endpoint}/bots/${savedBot.id}/stats`)
+        .get(`${endpoint}/bots/${savedBot.id}/log`)
         .set({ Authorization: key })
         .expect(200)
-        .expect(res => console.log(res.body))
+        .expect(res => assert(
+          'changes' in res.body,
+          'Response body should return bot log.'
+        ))
         .end(done);
     });
   });
