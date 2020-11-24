@@ -19,6 +19,10 @@ router.get('/', updateUser, async (req, res) => {
 router.get('/:id', (req, res) => {
     try {        
         const user = bot.users.cache.get(req.params.id);
-        res.json(user);
+        res.json({
+            ...user,
+            displayAvatarURL: user.displayAvatarURL({ dynamic: true, size: 256 }),
+            presence: user.presence
+        });
     } catch (error) { sendError(res, error); }
 });

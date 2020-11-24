@@ -1,5 +1,7 @@
-import { Client } from 'discord.js';
+import { config } from 'dotenv';
+config({ path: '.env' });
 
+import { Client } from 'discord.js';
 import mongoose from 'mongoose';
 import Deps from './utils/deps';
 

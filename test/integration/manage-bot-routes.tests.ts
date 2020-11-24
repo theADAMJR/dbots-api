@@ -1,9 +1,10 @@
-import { app } from '../../src/api/server';
+import { app, AuthClient } from '../../src/api/server';
 import request from 'supertest';
 import { BotDocument, SavedBot } from '../../src/data/models/bot';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { getObj } from '../test-utils';
 import '../mocks';
+import { SavedBotToken } from '../../src/data/models/bot-token';
 
 describe('routes/api/bots/manage-bot-routes', () => {
   let savedBot: BotDocument;
@@ -27,10 +28,16 @@ describe('routes/api/bots/manage-bot-routes', () => {
         websiteURL: ''
       }
     });
+
+    await SavedBotToken.create({
+      _id: 'bot_user_123',
+      token: 'secure_api_key_123'
+    });
   });
 
   after(async() => {
 		await SavedBot.deleteMany({});
+		await SavedBotToken.deleteMany({});
 	});	
   
   describe('POST /bots', () => {
@@ -45,7 +52,7 @@ describe('routes/api/bots/manage-bot-routes', () => {
       request(app)
         .post(`${endpoint}/bots`)
         .set({ Authorization: key })
-        .send(savedBot.listing)
+        .send({ botId: 'test_user_123' })
         .expect(400)
         .end(done);
     });
@@ -56,7 +63,10 @@ describe('routes/api/bots/manage-bot-routes', () => {
         .set({ Authorization: key })
         .send(savedBot.listing)
         .expect(201)
-        .expect(res => expect(res.body).to.deep.equal(getObj(savedBot)))
+        .expect(res => assert(
+          getObj(res.body) === getObj(savedBot.toJSON()),
+          'Saved bot must deep equal res body.'
+        ))
         .end(done);
     });
   });
@@ -82,7 +92,10 @@ describe('routes/api/bots/manage-bot-routes', () => {
         .patch(`${endpoint}/bots/${botId}`)
         .send(savedBot.listing)
         .expect(200)
-        .expect(res => expect(res.body).to.deep.equal(getObj(savedBot)))
+        .expect(res => assert(
+          getObj(res.body) === getObj(savedBot),
+          'Updated bot must equal saved bot.'
+        ))
         .end(done);
     });
   });

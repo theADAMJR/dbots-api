@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import { bot } from '../../../bot';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import Deps from '../../../utils/deps';
@@ -7,7 +6,7 @@ import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
 import { Listing } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { APIError, apiResponse, sendError } from '../../modules/api-utils';
+import { APIError, sendError } from '../../modules/api-utils';
 import { updateManageableBots, updateUser, validateBotExists, validateBotExistsFromBody, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import BotTokens from '../../../data/bot-tokens';
 
@@ -22,9 +21,9 @@ router.post('/', updateUser, validateUser, validateCanCreate, async (req, res) =
     const listing: Listing = req.body;
     const id = listing.botId;
 
-    const user = bot.users.cache.get(id)
+    const user = bot.users.cache.get(id);
     if (user && !user.bot)
-      throw new TypeError('This user is not a bot.');
+      throw new APIError('Cannot add a non-bot user.', 400);
 
     const savedBot = await bots.get(id);
     savedBot.listing = listing;
@@ -89,7 +88,7 @@ router.patch('/:id/webhook',
 
 function addDevRole(userId: string) {
   return bot.guilds.cache
-    ?.get(process.env.GUILD_ID).members.cache
+    ?.get(process.env.GUILD_ID)?.members.cache
     .get(userId)?.roles
     .add(process.env.DEV_ROLE_ID, 'Added bot.');
 }

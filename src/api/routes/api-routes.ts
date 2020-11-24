@@ -28,7 +28,9 @@ router.post('/error', async (req, res) => {
       `${dashboardLogsPath}/${sessionDate}.log`,
       req.body.message + '\n'
     );
-  } catch (error) { sendError(res, error); }
+  } catch (error) {
+    sendError(res, error);
+  }
 });
 
 router.get('/login', (req, res) =>

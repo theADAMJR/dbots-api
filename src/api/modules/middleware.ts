@@ -3,6 +3,7 @@ import Bots from '../../data/bots';
 import { SavedBot } from '../../data/models/bot';
 import { SavedBotPack } from '../../data/models/bot-pack';
 import Deps from '../../utils/deps';
+import { API } from '../server';
 import {  APIError, getUser, sendError } from './api-utils';
 
 const bots = Deps.get<Bots>(Bots);
@@ -66,10 +67,15 @@ export async function validateCanCreate(req, res, next) {
   if (exists)
     return sendError(res, new APIError('Bot already exists.', 400));
 
-  const userInGuild = bot.guilds.cache
+  const member = bot.guilds.cache
     .get(process.env.GUILD_ID)?.members.cache
-    .has(res.locals.user.id);
-  return (userInGuild)
+    .get(res.locals.user.id);
+  try {
+    await member.guild.fetchBan(member.user);
+    return sendError(res, new APIError('You are banned from the guild.', 403))
+  } catch {}
+
+  return (member)
     ? next()
     : sendError(res, new APIError('You must be in the DBots Discord Server to post bots.', 401)); 
 }
