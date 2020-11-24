@@ -55,7 +55,7 @@ router.put('/:id/webhook', updateUser, updateManageableBots, validateBotManager,
   } catch (error) { sendError(res, error); }  
 });
 
-router.put('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.patch('/:id', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 

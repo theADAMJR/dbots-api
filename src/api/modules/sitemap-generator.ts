@@ -2,6 +2,7 @@ import Deps from '../../utils/deps';
 import { bot } from '../../bot';
 
 import Bots from '../../data/bots';
+import { SavedBotPack } from '../../data/models/bot-pack';
 
 export default class SitemapGenerator {
   rootNames = [
@@ -89,7 +90,17 @@ export default class SitemapGenerator {
     return this.template(savedBots
       .filter(sb => bot.users.cache.has(sb._id))
       .map(sg => this
-        .url(`${process.env.DASHBOARD_URL}/bots/${sg._id}`))
-        .join(''));
+        .url(`${process.env.DASHBOARD_URL}/bots/${sg.id}`))
+        .join('')
+    );
+  }
+
+  async getPacksMap() {
+    const savedPacks = await SavedBotPack.find();
+    return this.template(savedPacks
+      .map(sp => this
+        .url(`${process.env.DASHBOARD_URL}/packs/${sp.id}`))
+        .join('')
+    );
   }
 }

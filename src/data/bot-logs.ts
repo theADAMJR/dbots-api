@@ -3,7 +3,8 @@ import { LogDocument, SavedLog } from './models/log';
 
 export default class BotLogs extends DBWrapper<string, LogDocument> {
     protected async getOrCreate(id: string) {
-        return await SavedLog.findById(id) ?? await this.create(id);
+        return await SavedLog.findById(id)
+            ?? await this.create(id);
     }
 
     async delete(id: string) {
@@ -11,7 +12,7 @@ export default class BotLogs extends DBWrapper<string, LogDocument> {
     }
 
     protected async create(id: string) {
-        return new SavedLog({ _id: id }).save();
+        return SavedLog.create({ _id: id });
     }
 
     async getAll() {

@@ -2,26 +2,37 @@ import { Router } from 'express';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { BotStats, sendError } from '../../modules/api-utils';
+import { APIError, sendError } from '../../modules/api-utils';
 import BotTokens from '../../../data/bot-tokens';
 import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
+import Stats from '../../modules/stats';
+import { SavedBot } from '../../../data/models/bot';
 
 export const router = Router({ mergeParams: true });
 
-const bots = Deps.get<Bots>(Bots),
-      botTokens = Deps.get<BotTokens>(BotTokens),
-      logs = Deps.get<BotLogs>(BotLogs);
+const bots = Deps.get<Bots>(Bots);
+const botTokens = Deps.get<BotTokens>(BotTokens);
+const logs = Deps.get<BotLogs>(BotLogs);
+const stats = Deps.get<Stats>(Stats);
+      
+router.get('/stats', validateBotExists, (req, res) => {
+  const id = req.params.id;
 
-router.post('/stats', async (req, res) => {
+  res.json({
+    general: stats.general(id),
+    topVoters: stats.topVoters(id),
+    votes: stats.votes(id),
+    recentVotes: stats.recentVotes(id)
+  });
+});
+
+router.post('/stats', validateBotExists, validateAPIKey, async (req, res) => {
   try {
-    const id = req.params.id;    
-    await botTokens.validate(id, req.headers.authorization);
-
-    const savedBot = await bots.get(id);
-    savedBot.stats = req.body as BotStats;
+    const savedBot = await bots.get(req.params.id);
+    savedBot.stats = req.body;
     await savedBot.save();    
 
-    res.json({ success: true });
+    res.json(savedBot.stats);
   } catch (error) { sendError(res, error); }
 });
 
@@ -32,14 +43,14 @@ router.get('/log', updateUser, updateManageableBots, validateBotManager, async(r
   } catch (error) { sendError(res, error); }
 });
 
-router.get('/token', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.get('/key', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const { token } = await botTokens.get(req.params.id);
     res.json(token);
   } catch (error) { sendError(res, error); }
 });
 
-router.get('/token/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -49,3 +60,17 @@ router.get('/token/regen', updateUser, updateManageableBots, validateBotManager,
     res.json(token);
   } catch (error) { sendError(res, error); }
 });
+
+async function validateBotExists(req, res, next) {
+  const exists = await SavedBot.exists({ _id: req.params.id });
+  return (exists)
+    ? next()
+    : sendError(res, new APIError('Bot not found', 404));
+}
+
+async function validateAPIKey(req, res, next) {
+  const savedToken = await botTokens.get(req.params.id);
+  return (savedToken.token === req.get('Authorization'))
+    ? next()
+    : sendError(res, new APIError('Invalid API token.', 401));
+}

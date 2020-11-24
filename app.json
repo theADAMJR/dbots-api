@@ -1,0 +1,61 @@
+{
+  "name": "DBots - Best Discord Bots",
+  "description": "Deploy the best Discord bot list, in a few steps.",
+  "keywords": [
+    "discord bot list",
+    "discord bots",
+    "dbots"
+  ],
+  "repository": "https://github.com/DBots-co/API",
+  "env": {
+    "API_URL": {
+      "description": "Same as DASHBOARD_URL, but with /api/v1 at the end.",
+      "value": "https://<heroku_app_name>/herokuapp.com/api/v1"
+    },
+    "BOT_ID": {
+      "description": "Bot ID from https://discord.com/developers.",    
+      "value": ""
+    },
+    "BOT_SECRET": {
+      "description": "Bot Secret from https://discord.com/developers.",    
+      "value": ""
+    },
+    "BOT_TOKEN": {
+      "description": "Bot Token from https://discord.com/developers.",    
+      "value": ""
+    },
+    "BOT_ROLE_ID": {
+      "description": "ID of the bot role, given to bots that join the guild.",    
+      "value": ""
+    },
+    "DASHBOARD_URL": {
+      "description": "The Website URL [https://<heroku_app_name>/herokuapp.com]",    
+      "value": "https://<heroku_app_name>/herokuapp.com"
+    },
+    "DEV_ROLE_ID": {
+      "description": "ID of the developer role, in the bot list guild.",    
+      "value": ""
+    },
+    "GUILD_ID": {
+      "description": "ID of the guild for the bot list.",    
+      "value": ""
+    },
+    "LOG_CHANNEL_ID": {
+      "description": "ID of the log channel, in the bot list guild.",    
+      "value": ""
+    },
+    "MONGO_URI": {
+      "description": "The MongoDB URI to your database [i.e. from MongoDB Atlas].",
+      "value": "mongodb+srv://<username>:<password>@<hostname>/6PG?retryWrites=true&w=majority"
+    },
+    "PORT": {
+      "description": "Port for Heroku to use (default: 3000).",
+      "value": "3000"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

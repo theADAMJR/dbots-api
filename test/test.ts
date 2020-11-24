@@ -13,4 +13,8 @@ describe('start', async() => {
   });
     
   await import('./integration/pack-routes.tests');
-})
+  await import('./integration/stats-routes.tests');
+
+  await import('./unit/stats.tests');
+  await import('./unit/audit-logger.tests');
+});

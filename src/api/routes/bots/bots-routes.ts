@@ -18,7 +18,6 @@ export const router = Router();
 
 const bots = Deps.get<Bots>(Bots);
 const botTokens = Deps.get<BotTokens>(BotTokens);
-const stats = Deps.get<Stats>(Stats);
 const users = Deps.get<Users>(Users);
 
 router.get('/', async (req, res) => {
@@ -132,15 +131,4 @@ router.get('/:id/widget', async (req, res) => {
         
         res.set({ 'Content-Type': 'image/png' }).send(image);
     } catch (error) { sendError(res, error); }
-});
-
-router.get('/:id/stats', (req, res) => {
-    const id = req.params.id;
-
-    res.json({
-        general: stats.general(id),
-        topVoters: stats.votes(id),
-        votes: stats.votes(id),
-        recentVotes: stats.recentVotes(id)
-    });
 });

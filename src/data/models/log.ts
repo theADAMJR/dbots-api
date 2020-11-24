@@ -8,14 +8,12 @@ export class Change {
         public changes: { old: {}, new: {}}) {}
 }
 
-const LogSchema = new Schema({
-    _id: String,
-    changes: { type: Array, default: [] }
-});
-
 export interface LogDocument extends Document {
     _id: string;
     changes: Change[];
 }
 
-export const SavedLog = model<LogDocument>('log', LogSchema);
+export const SavedLog = model<LogDocument>('log', new Schema({
+    _id: String,
+    changes: { type: Array, default: [] }
+}));

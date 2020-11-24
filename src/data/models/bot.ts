@@ -6,7 +6,7 @@ export class Listing {
     invite: string;
     githubURL: string;
     overview: string;
-    ownerIds: string[];
+    ownerId: string;
     prefix: string;
     supportInvite: string; 
     tags: string[];

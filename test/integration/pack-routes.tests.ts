@@ -8,7 +8,7 @@ import '../mocks';
 describe('/src/api/routes/pack-routes', () => {
   let pack: BotPackDocument;
   const endpoint = `/api/v1`;
-  const key = '120912378197uyh9ryqh482yg1b4213';
+  const key = 'password_123';
 
   before(async() => {
     pack = new SavedBotPack();
@@ -18,7 +18,7 @@ describe('/src/api/routes/pack-routes', () => {
   });
 
   after(async() => {
-    await pack.remove();
+    await SavedBotPack.deleteMany({});
   });
 
   describe('GET /packs', () => {
@@ -28,7 +28,8 @@ describe('/src/api/routes/pack-routes', () => {
         .expect(200)
         .expect(res => assert(
           Array.isArray(res.body),
-          'Response body should be of type array.'))
+          'Response body should be of type array.')
+        )
         .end(done);
     });
   });
@@ -64,6 +65,15 @@ describe('/src/api/routes/pack-routes', () => {
         ))
         .end(done);
     });
+
+    it('bot pack does not exist, sends 404', (done) => {
+      request(app)
+        .patch(`${endpoint}/packs/231i9312j38273yh213h21877y323`)
+        .send(pack)
+        .set({ Authorization: key })
+        .expect(404)
+        .end(done);
+    });
   });
 
   describe('DELETE /packs', () => {
@@ -77,6 +87,15 @@ describe('/src/api/routes/pack-routes', () => {
         !await SavedBotPack.exists(pack),
         'Pack should no longer exist.'
       );
+    });
+
+    it('bot pack does not exist, sends 404', (done) => {
+      request(app)
+        .delete(`${endpoint}/packs/231i9312j38273yh213h21877y323`)
+        .send(pack)
+        .set({ Authorization: key })
+        .expect(404)
+        .end(done);
     });
   });
 

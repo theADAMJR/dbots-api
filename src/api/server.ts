@@ -27,6 +27,7 @@ export const AuthClient = new OAuthClient({
 export class API {
     rootSitemap = '';
     botsSitemap = '';
+    packsSitemap = '';
 
     constructor(
         private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
@@ -39,6 +40,8 @@ export class API {
             res.set('Content-Type', 'text/xml').send(this.rootSitemap));
         app.get('/api/v1/sitemaps/bots.xml', (req, res) =>
             res.set('Content-Type', 'text/xml').send(this.botsSitemap));
+        app.get('/api/v1/sitemaps/packs.xml', (req, res) =>
+            res.set('Content-Type', 'text/xml').send(this.packsSitemap));
             
             app.get('/bots', (req,res) => res.redirect('/'));
             
@@ -64,5 +67,6 @@ export class API {
     async initSitemaps() {
         this.rootSitemap = this.sitemapGenerator.getRootMap();
         this.botsSitemap = await this.sitemapGenerator.getBotsMap();
+        this.packsSitemap = await this.sitemapGenerator.getPacksMap();
     }
 }

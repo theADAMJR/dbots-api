@@ -7,6 +7,8 @@ const distinct = (v, i, a) => a.indexOf(v) === i;
 export default class Stats {
   private savedBots: BotDocument[] = [];
 
+  constructor(private bots = Deps.get<Bots>(Bots)) {}
+
   general(id: string): GeneralStats {
     const savedBot = this.savedBots.find(b => b.id === id);
     if (!savedBot)
@@ -14,7 +16,7 @@ export default class Stats {
     
     return {
       approvedAt: savedBot.approvedAt,
-      guildCount: savedBot.stats.guildCount,
+      guildCount: savedBot.stats?.guildCount,
       lastVoteAt: savedBot.lastVoteAt,
       totalVotes: savedBot.totalVotes,
       voteCount: savedBot.votes.length
@@ -55,10 +57,11 @@ export default class Stats {
     return savedBot.votes
       .map(c => c.by)
       .filter(distinct)
-      .map(id => ({ userId: id, count: savedBot.votes.filter(v => v.by = id).length }));
+      .map(id => ({
+        userId: id,
+        count: savedBot.votes.filter(v => v.by = id).length
+      }));
   }
-
-  constructor(private bots = Deps.get<Bots>(Bots)) {}
 
   async init() {
     await this.updateValues();

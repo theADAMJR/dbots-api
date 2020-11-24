@@ -17,6 +17,7 @@ export async function updateUser(req, res, next) {
 export async function updateManageableBots(req, res, next) {
   try {
     const savedBots = await bots.getManageable(res.locals.user);  
+    
     res.locals.bots = bot.users.cache
       .filter(u => savedBots.some(sb => sb._id === u.id));
   
@@ -30,7 +31,7 @@ export async function validateBotManager(req, res, next) {
     if (!key)
       throw new APIError('Unauthorized.', 401);
   
-    const botFound = res.locals.bots.some(b => b.id === req.params.id)
+    const botFound = res.locals.bots.some(b => b.id === req.params.id);
     if (!botFound)
       throw new APIError('Bot not manageable.');
   

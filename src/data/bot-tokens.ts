@@ -6,7 +6,7 @@ export default class BotTokens extends DBWrapper<string, BotTokenDocument> {
     protected async getOrCreate(id: string) {
         return await SavedBotToken.findById(id)
             ?? await this.create(id);
-    }   
+    }
 
     protected create(id: string) {
         return new SavedBotToken({ _id: id, token: createUUID() }).save();
@@ -14,11 +14,5 @@ export default class BotTokens extends DBWrapper<string, BotTokenDocument> {
 
     async delete(id: string) {
         return await SavedBotToken.findByIdAndDelete(id);
-    }
-
-    async validate(botId: string, value: string) {
-        const savedToken = await SavedBotToken.findById(botId);
-        if (savedToken.token !== value)
-            throw new TypeError('Invalid token.');
     }
 }

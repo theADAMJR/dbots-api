@@ -2,5 +2,8 @@
   "mochaExplorer.files": "test/unit/*.tests.ts",
   "mochaExplorer.require": "ts-node/register",
   "mochaExplorer.logpanel": true,
-  "debug.javascript.warnOnLongPrediction": false
+  "debug.javascript.warnOnLongPrediction": false,
+  "cSpell.words": [
+    "regen"
+  ]
 }
