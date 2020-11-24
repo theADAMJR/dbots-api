@@ -1,6 +1,10 @@
 # DBots API
 Bot for DBots.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dbots-co/api)
+
+---
+
 Projects to Host Series - https://www.youtube.com/watch?v=ARkTLD_j2cM&list=PLGfT2ttRbfiyyci-6_mmKaTA0-2qm_U6H&index=1
 
 **Website**: https://github.com/DBots-co/Website
