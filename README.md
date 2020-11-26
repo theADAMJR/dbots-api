@@ -43,17 +43,17 @@ MONGO_URI="mongodb://localhost/DBots"
 ## Testing
 Create a `test/.env` file similar to above, with a few differences (i.e. different database and port).
 
-`.env` example:
+Test `.env` example:
 ```.env
 API_URL="http://localhost:3000/api/v1"
-BOT_ID="NTMzOTQ3MDAxNTc4OTc5MzI4.XDsK5Q.Fq1LOiPscusQSvNecRpUR81Ii3o"
-BOT_TOKEN="KL1gYYEee2TmR9xr4wdtM46mkaX5H1_R"
-BOT_SECRET="533947001578979328"
+BOT_ID="NTMzOTQ3MDAxNTc4OTc5MzI4.XDsK5Q.lx2V4n38wqEKYHPM9bXZfr2IFXw"
+BOT_TOKEN="NTMzOTQ3MDAxNTc4OTc5MzI4.XDsK5Q.8OID96ZNFv4U369DErk0SQIIK28"
+BOT_SECRET="7re3396ielpA37WXnCdhRwJ4RgPh_x1B"
 BOT_ROLE_ID="723982260554039349"
-DASHBOARD_URL="http://localhost:4200",
+DASHBOARD_URL="http://localhost:4200"
 DEV_ROLE_ID="761610131703463997"
 LOG_CHANNEL_ID="724730682433077359"
-GUILD_ID="531196495584821314"
+GUILD_ID="test_guild_123"
 PORT="3001"
 MONGO_URI="mongodb://localhost/DBots-Test"
 ```

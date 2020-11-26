@@ -2,15 +2,17 @@ import { Collection } from 'discord.js';
 import { AuthClient } from '../src/api/server';
 import { bot } from '../src/bot';
 
+const user = {
+  id: 'test_user_123',
+  username: 'ADAMJR',
+  bot: false
+} as any;
+
 AuthClient.getUser = async (key: string) => {
   if (!key)
     throw new TypeError('Key required.');
 
-  return {
-    id: 'test_user_123',
-    username: 'ADAMJR',
-    bot: false
-  } as any;
+  return user;
 };
 
 bot.users.cache = new Collection([
@@ -19,6 +21,21 @@ bot.users.cache = new Collection([
       id: 'bot_user_123',
       username: '4PG',
       displayAvatarURL: (...args) => ''
+    } as any
+  ],
+  [
+    'test_user_123', user
+  ]
+]);
+
+bot.guilds.cache = new Collection([
+  [
+    'test_guild_123', {
+      id: 'test_guild_123',
+      name: '4PG Test Server',
+      members: {
+        cache: new Collection([[ 'test_user_123', user ]])
+      }
     } as any
   ]
 ]);

@@ -8,7 +8,6 @@ import '../mocks';
 
 describe('/src/api/routes/bots/stats-routes', () => {
   let savedBot: BotDocument;
-  let savedToken: BotTokenDocument;
   const key = 'password_123';
   const endpoint = `/api/v1`;
   const apiKey = 'secure_api_key_123';
@@ -25,7 +24,7 @@ describe('/src/api/routes/bots/stats-routes', () => {
     });
 
     await SavedLog.create({ _id: savedBot.id });
-    savedToken = await SavedBotToken.create({ _id: savedBot._id, token: apiKey });
+    await SavedBotToken.create({ _id: savedBot._id, token: apiKey });
   });
 
   after(async() => {
@@ -112,6 +111,37 @@ describe('/src/api/routes/bots/stats-routes', () => {
           'Response body should return new API key.'
         ))
         .end(done);
+    });
+  });
+
+  describe('PATCH /bots/:id/webhook', () => {
+    it('user not logged in, status 401', (done) => {
+      request(app)
+        .patch(`${endpoint}/bots/${savedBot.id}/webhook`)
+        .expect(401)
+        .end(done);
+    });
+
+    it('bot not found, status 404', (done) => {
+      request(app)
+        .patch(`${endpoint}/bots/123012u38123u218392183/webhook`)
+        .set({ Authorization: key })
+        .expect(404)
+        .end(done);
+    });
+
+    it('valid body, bot updated', async () => {
+      await request(app)
+        .patch(`${endpoint}/bots/${savedBot.id}/webhook`)
+        .set({ Authorization: key })
+        .send({ voteWebhookURL: 'https://dbots.co' })
+        .expect(200);
+
+      const newSavedToken = await SavedBotToken.findById(savedBot.id);          
+      assert(
+        newSavedToken.voteWebhookURL === 'https://dbots.co',
+        'Bot token should be updated.'
+      );
     });
   });
 });

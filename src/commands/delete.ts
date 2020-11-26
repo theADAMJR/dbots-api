@@ -1,16 +1,18 @@
 import { Command, CommandContext, Permission } from './command';
 import { getIDFromMention } from '../utils/command-utils';
-import { HexColor, sendLog } from '../api/routes/bots/manage-bot-routes';
 import Deps from '../utils/deps';
 import Bots from '../data/bots';
 import { SavedBot } from '../data/models/bot';
+import { ChannelLog } from '../api/modules/channel-log';
 
 export default class DeleteCommand implements Command {
     name = 'delete';
     aliases = ['remove'];
     precondition: Permission = 'ADMINISTRATOR';
 
-    constructor(private bots = Deps.get<Bots>(Bots)) {}
+    constructor(
+        private bots = Deps.get<Bots>(Bots),
+        private channelLog = Deps.get<ChannelLog>(ChannelLog)) {}
     
     execute = async (ctx: CommandContext, botUserMention: string, ...reason: string[]) => {
         const botId = getIDFromMention(botUserMention);
@@ -22,11 +24,7 @@ export default class DeleteCommand implements Command {
         await savedBot.remove();
         
         const message = reason?.join(' ') || 'No reason specified.';
-        await sendLog(
-            'Bot Deleted',
-            `<@!${savedBot.ownerId}>'s bot, <@!${botId}> was deleted by <@!${ctx.user.id}> - \`${message}\``,
-            HexColor.Red
-        );
+        await this.channelLog.deleted(botId, ctx.member.id, message);
 
         return ctx.channel.send(`✅ Success`);
     }

@@ -1,7 +1,7 @@
 import {  Change } from '../../data/models/log';
 
 export default class AuditLogger {
-    static getChanges(values: { old: {}, new: {} }, by: string) {
+    getChanges(values: { old: {}, new: {} }, by: string) {
         let changes = { old: {}, new: {} };
         
         for (const key in values.old) {

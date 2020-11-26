@@ -1,13 +1,9 @@
 import rateLimit from 'express-rate-limit';
-import rateLimitStore from '@lykmapipo/rate-limit-mongoose';
+import RateLimitStore from 'rate-limit-mongo';
 
-
-const whiteListedIPs = ['::1', '.', '::ffff:127.0.0.1'];
-
-const windowMs = 10 * 60 * 1000;
 export default rateLimit({
-    store: rateLimitStore({ windowMs }),
-    max: 600,
-    message: `You are being rate limited.`,
-    skip: (req) => whiteListedIPs.some(ip => ip === req.ip)
+  max: 300,
+  message: 'You are being rate limited.',
+  store: new RateLimitStore({ uri: process.env.MONGO_URI }),
+  windowMs: 60 * 1000
 });

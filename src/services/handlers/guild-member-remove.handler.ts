@@ -2,23 +2,21 @@ import EventHandler from './event-handler';
 import { GuildMember } from 'discord.js';
 import Bots from '../../data/bots';
 import Deps from '../../utils/deps';
-import { HexColor, sendLog } from '../../api/routes/bots/manage-bot-routes';
+import { ChannelLog } from '../../api/modules/channel-log';
 
 export default class GuildMemberRemoveHandler implements EventHandler {
     on = 'guildMemberRemove';
 
-    constructor(private bots = Deps.get<Bots>(Bots)) {}
+    constructor(
+        private bots = Deps.get<Bots>(Bots),
+        private channelLog = Deps.get<ChannelLog>(ChannelLog)) {}
 
     async invoke(member: GuildMember) {
         if (member.user.bot) return;
 
         const savedBots = await this.bots.getManageable(member);
         for (const savedBot of savedBots) {
-            await sendLog(
-                'Bot Deleted',
-                `<@!${member.id}> left the server, so <@!${savedBot.id}> was deleted.`,
-                HexColor.Red
-            );
+            await this.channelLog.leftServer(savedBot);
             await savedBot.remove();
         }
     }

@@ -1,102 +1,76 @@
 import { Router } from 'express';
 import { bot } from '../../../bot';
-import { MessageEmbed, TextChannel } from 'discord.js';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { Listing } from '../../../data/models/bot';
+import { Listing, SavedBot } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
-import { APIError, sendError } from '../../modules/api-utils';
-import { updateManageableBots, updateUser, validateBotExists, validateBotExistsFromBody, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
-import BotTokens from '../../../data/bot-tokens';
+import { addDevRole, APIError, apiResponse, kickMember, sendError } from '../../modules/api-utils';
+import { updateManageableBots, updateUser, validateBotExists, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
+import { ChannelLog } from '../../modules/channel-log';
 
 export const router = Router();
 
+const auditLogger = Deps.get<AuditLogger>(AuditLogger);
 const bots = Deps.get<Bots>(Bots);
+const channelLog = Deps.get<ChannelLog>(ChannelLog);
 const logs = Deps.get<BotLogs>(BotLogs);
-const tokens = Deps.get<BotTokens>(BotTokens);
 
-router.post('/', updateUser, validateUser, validateCanCreate, async (req, res) => {
+router.post('/',
+  updateUser, validateUser, validateCanCreate,
+  async (req, res) => {
   try {
     const listing: Listing = req.body;
-    const id = listing.botId;
 
-    const user = bot.users.cache.get(id);
+    const user = bot.users.cache.get(listing.botId);
     if (user && !user.bot)
       throw new APIError('Cannot add a non-bot user.', 400);
 
-    const savedBot = await bots.get(id);
-    savedBot.listing = listing;
-    savedBot.ownerId = res.locals.user.id;
-    await savedBot.save();
+    const savedBot = await SavedBot.create({
+      _id: listing.botId,
+      listing,
+      ownerId: res.locals.user.id
+    });
 
-    try {
-      await sendLog('Bot Added', `<@!${savedBot.ownerId}> added <@!${id}>.`);
-      await addDevRole(savedBot.ownerId);
-    }
-    catch {}
+    await channelLog.added(savedBot);
+    await addDevRole(savedBot.ownerId);
 
     res.status(201).json(savedBot);
-  } catch (error) { sendError(res, error); }
+  } catch (error) {
+    sendError(res, error);
+  }
 });
 
 router.patch('/:id',
-  updateUser, updateManageableBots, validateBotManager, validateBotExists,
+  updateUser, validateUser, updateManageableBots, validateBotManager,
   async (req, res) => {
   try {
     const id = req.params.id;
     const savedBot = await saveBotAndChanges(id, req);
-    await sendLog('Bot Edited', `<@!${savedBot.ownerId}> edited <@!${id}>.`);
+    await channelLog.edited(savedBot);
 
     res.json(savedBot);
   } catch (error) { sendError(res, error); }
 });
 
 router.delete('/:id',
-  updateUser, updateManageableBots, validateBotManager, validateBotExistsFromBody,
+  updateUser, validateUser, updateManageableBots, validateBotManager,
   async (req, res) => {
   try {
     const id = req.params.id;
 
     await bots.delete(id);
-    await sendLog(
-      `Bot Deleted`,
-      `<@!${res.locals.user.id}> deleted <@!${id}> for some reason.`,
-      HexColor.Red
-    );
+    await channelLog.deleted(id, res.locals.user.id);
+    await kickMember(id);
 
-    await bot.guilds.cache
-      .get(process.env.GUILD_ID)?.members.cache
-      .get(id)
-      ?.kick();
-
-    res.json({ code: 200, message: 'Success!' });
+    apiResponse(res, { message: 'Success!' });
   } catch (error) { sendError(res, error); }
 });
-
-router.patch('/:id/webhook',
-  updateUser, updateManageableBots, validateBotExistsFromBody, validateBotManager,
-  async (req, res) => {
-  try {
-    const savedToken = await tokens.get(req.params.id);
-    savedToken.voteWebhookURL = req.body.voteWebhookURL;
-    await savedToken.save();
-
-    res.json({ code: 201, message: 'Success!' });
-  } catch (error) { sendError(res, error); }  
-});
-
-function addDevRole(userId: string) {
-  return bot.guilds.cache
-    ?.get(process.env.GUILD_ID)?.members.cache
-    .get(userId)?.roles
-    .add(process.env.DEV_ROLE_ID, 'Added bot.');
-}
 
 async function saveBotAndChanges(id: any, req: any) {
   let savedBot = await bots.get(id);
 
-  const change = AuditLogger.getChanges(
+  const change = auditLogger.getChanges(
     { old: savedBot.listing, new: req.body }, savedBot.ownerId);
   
   savedBot.listing = req.body;
@@ -106,17 +80,4 @@ async function saveBotAndChanges(id: any, req: any) {
   await log.save();
   
   return bots.save(savedBot);
-}
-
-export function sendLog(title: string, description: string, hexColor = HexColor.Blue) {
-  return (bot.guilds.cache
-    .get(process.env.GUILD_ID)?.channels.cache
-    .get(process.env.LOG_CHANNEL_ID) as TextChannel)
-    ?.send(new MessageEmbed({ color: hexColor, description, title }));
-}
-
-export enum HexColor {
-  Blue = '#4287f5',
-  Green = '#42f54e',
-  Red = '#f54242'
 }

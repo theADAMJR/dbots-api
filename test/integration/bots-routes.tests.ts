@@ -10,15 +10,15 @@ describe('routes/api/bots', () => {
 	const endpoint = '/api/v1';
 
     beforeEach(async() => {
-		await SavedBot.create({
-			_id: 'bot_user_123',
-			lastVoteAt: new Date(),
-			votes: []
-		})
-    });
+			await SavedBot.create({
+				_id: 'bot_user_123',
+				lastVoteAt: new Date(),
+				votes: []
+			})
+		});
 
-    after(async() => {
-		await SavedBot.deleteMany({});
+    afterEach(async() => {
+			await SavedBot.deleteMany({});
 	});
 	
 	describe('GET /bots', () => {

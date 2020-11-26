@@ -2,11 +2,10 @@ import { Router } from 'express';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
-import { APIError, sendError } from '../../modules/api-utils';
+import { sendError } from '../../modules/api-utils';
 import BotTokens from '../../../data/bot-tokens';
-import { updateManageableBots, updateUser, validateBotManager } from '../../modules/middleware';
+import { updateManageableBots, updateUser, validateAPIKey, validateBotExists, validateBotExistsFromBody, validateBotManager, validateUser } from '../../modules/middleware';
 import Stats from '../../modules/stats';
-import { SavedBot } from '../../../data/models/bot';
 
 export const router = Router({ mergeParams: true });
 
@@ -61,16 +60,14 @@ router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, a
   } catch (error) { sendError(res, error); }
 });
 
-async function validateBotExists(req, res, next) {
-  const exists = await SavedBot.exists({ _id: req.params.id });
-  return (exists)
-    ? next()
-    : sendError(res, new APIError('Bot not found', 404));
-}
+router.patch('/webhook',
+  updateUser, validateUser, updateManageableBots, validateBotExists, validateBotManager,
+  async (req, res) => {
+  try {
+    const savedToken = await botTokens.get(req.params.id);
+    savedToken.voteWebhookURL = req.body.voteWebhookURL;
+    await savedToken.save();
 
-async function validateAPIKey(req, res, next) {
-  const savedToken = await botTokens.get(req.params.id);
-  return (savedToken.token === req.get('Authorization'))
-    ? next()
-    : sendError(res, new APIError('Invalid API token.', 401));
-}
+    res.json({ code: 201, message: 'Success!' });
+  } catch (error) { sendError(res, error); }  
+});
