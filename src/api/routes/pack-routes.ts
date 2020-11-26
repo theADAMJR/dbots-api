@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { SavedBotPack } from '../../data/models/bot-pack';
 import Users from '../../data/users';
 import Deps from '../../utils/deps';
-import { APIError, sendError, validateIfCanVote as validateCanVote } from '../modules/api-utils';
+import { sendError, validateIfCanVote as validateCanVote } from '../modules/api-utils';
 import { updateUser, validatePackExists, validateUser } from '../modules/middleware';
 
 const users = Deps.get<Users>(Users);
@@ -30,7 +30,9 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    let _id = req.body.name?.replace(/ /g, '-');
+    let _id = req.body.name
+      ?.replace(/ /g, '-')
+      .replace(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/g, '');
     const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
       _id += '-' + Math
