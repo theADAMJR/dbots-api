@@ -30,16 +30,21 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    let _id = req.body._id?.replace(/ /g, '-');
+    let _id = req.body.name?.replace(/ /g, '-');
     const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
       _id += '-' + Math
         .floor(Math.random() * 999999)
         .toString()
-        .padStart(6, '0')
+        .padStart(6, '0');
     }
 
-    const pack = await SavedBotPack.create({ ...req.body, _id });
+    const pack = await SavedBotPack.create({
+      ...req.body,
+      createdAt: new Date(),
+      owner: res.locals.user.id,
+      _id
+    });
     res.status(201).json(pack);
   } catch (error) { sendError(res, error); }
 });
@@ -47,8 +52,9 @@ router.post('/', updateUser, validateUser, async (req, res) => {
 router.patch('/:id', updateUser, validateUser, validatePackExists, async (req, res) => {
   try {
     const pack = await SavedBotPack.findById(req.params.id);
-    pack.bots = req.body.bots;
-    pack.description = req.body.description;
+    pack.bots = (req.body.bots ?? pack.bots)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    pack.description = req.body.description ?? pack.description;
     pack.updatedAt = new Date();
     await pack.updateOne(pack); 
     

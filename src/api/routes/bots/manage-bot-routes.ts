@@ -24,7 +24,7 @@ router.post('/',
 
     const user = bot.users.cache.get(listing.botId);
     if (user && !user.bot)
-      throw new APIError('Cannot add a non-bot user.', 400);
+      throw new APIError('Cannot add a non-bot user.');
 
     const savedBot = await SavedBot.create({
       _id: listing.botId,

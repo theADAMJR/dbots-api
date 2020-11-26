@@ -13,6 +13,7 @@ describe('/src/api/routes/pack-routes', () => {
   before(async() => {
     pack = new SavedBotPack();
     pack._id = 'bot_pack_123';
+    pack.name = 'bot_pack_123'
     pack.owner = 'test_user_123' as any;
     await pack.save();
   });
