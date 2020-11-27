@@ -5,7 +5,7 @@ import { BotDocument } from '../../data/models/bot';
 export default class Stats {
   constructor(private bots = Deps.get<Bots>(Bots)) {}
 
-  async general(savedBot: BotDocument): Promise<GeneralStats> {    
+  general(savedBot: BotDocument): GeneralStats {    
     return {
       approvedAt: savedBot.approvedAt,
       guildCount: savedBot.stats?.guildCount,
@@ -15,11 +15,11 @@ export default class Stats {
     }
   }
 
-  async recentVotes(savedBot: BotDocument): Promise<VoteStats[]> {
+  recentVotes(savedBot: BotDocument): VoteStats[] {
     return Array(7)
       .fill(new Date())
       .map((today, i) => new Date(today - 8.64e7 * i))
-      .map(date => ({
+      .map((date) => ({
         day: `${date.getDate().toString().padStart(2, '0')
           }/${(date.getMonth() + 1).toString().padStart(2, '0')}`,
         count: savedBot.votes
@@ -27,13 +27,13 @@ export default class Stats {
       .reverse();
   }
 
-  async topVoters(savedBot: BotDocument): Promise<TopVoterStats[]> {
+  topVoters(savedBot: BotDocument): TopVoterStats[] {
     return savedBot.votes
       .map(c => c.by)
       .filter((v, i, a) => a.indexOf(v) === i)
       .map(id => ({
         userId: id,
-        count: savedBot.votes.filter(v => v.by = id).length
+        count: savedBot.votes.filter(v => v.by === id).length
       }));
   }
 }

@@ -18,10 +18,10 @@ router.get('/stats', validateBotExists, async (req, res) => {
   const savedBot = await bots.get(req.params.id);
 
   res.json({
-    general: await stats.general(savedBot),
-    topVoters: await stats.topVoters(savedBot),
+    general: stats.general(savedBot),
+    topVoters: stats.topVoters(savedBot),
     votes: savedBot.votes,
-    recentVotes: await stats.recentVotes(savedBot)
+    recentVotes: stats.recentVotes(savedBot)
   });
 });
 
