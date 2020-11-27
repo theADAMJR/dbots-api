@@ -37,7 +37,7 @@ router.post('/',
 
     res.status(201).json(savedBot);
   } catch (error) {
-    await sendError(res, error);
+    await sendError(req, res, error);
   }
 });
 
@@ -50,7 +50,7 @@ router.patch('/:id',
     await channelLog.edited(savedBot);
 
     res.json(savedBot);
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 router.delete('/:id',
@@ -64,7 +64,7 @@ router.delete('/:id',
     await kickMember(id);
 
     apiResponse(res, { message: 'Success!' });
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 async function saveBotAndChanges(id: any, req: any) {

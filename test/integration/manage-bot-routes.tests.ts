@@ -2,20 +2,23 @@ import { app } from '../../src/api/server';
 import request from 'supertest';
 import { BotDocument, SavedBot } from '../../src/data/models/bot';
 import { assert } from 'chai';
-import { getObj } from '../test-utils';
 import {  SavedBotToken } from '../../src/data/models/bot-token';
-import '../mocks';
 import { SavedLog } from '../../src/data/models/log';
+import { SavedUser, UserDocument } from '../../src/data/models/user';
+import '../mocks/integration-mocks';
 
 describe('routes/api/bots/manage-bot-routes', () => {
   let savedBot: BotDocument;
+  let savedUser: UserDocument;
+
   const key = 'password_123';
 	const botId = 'bot_user_123';
 	const endpoint = '/api/v1';
 
   beforeEach(async () => {
-    await SavedLog.deleteMany({});
+    await cleanDatabase();
 
+    savedUser = await SavedUser.create({ _id: 'test_user_123' });
     savedBot = await SavedBot.create({
       _id: botId,
       body: {
@@ -24,26 +27,18 @@ describe('routes/api/bots/manage-bot-routes', () => {
         githubURL: '',
         invite: '1927uhsd',
         overview: 'The best bot the world has ever seen',
-        ownerId: 'test_user_123',
+        ownerId: savedUser.id,
         prefix: '.',
         supportInvite: '289u138',
         tags: [],
         websiteURL: ''
-      }
+      },
+      ownerId: savedUser.id
     });
-    await SavedBot.updateOne({ _id: botId }, { $set: { ownerId: 'test_user_123' } });
-    
-    await SavedBotToken.create({
-      _id: botId,
-      token: 'secure_api_key_123'
-    });
+    await SavedBotToken.create({ _id: botId, token: 'secure_api_key_123' });
   });
 
-  afterEach(async() => {
-		await SavedBot.deleteMany({});
-		await SavedBotToken.deleteMany({});
-    await SavedLog.deleteMany({});
-	});	
+  afterEach(() => cleanDatabase());
   
   describe('POST /bots', () => {
     it('user not logged in, status 401', (done) => {
@@ -133,3 +128,10 @@ describe('routes/api/bots/manage-bot-routes', () => {
     });
   });
 });
+
+async function cleanDatabase() {
+  await SavedBot.deleteMany({});
+  await SavedBotToken.deleteMany({});
+  await SavedLog.deleteMany({});
+  await SavedUser.deleteMany({});
+}

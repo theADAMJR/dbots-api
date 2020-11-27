@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import OAuthClient from '@2pg/oauth';
 import bodyParser from 'body-parser';
 import rateLimiter from './modules/rate-limiter';
 import Log from '../utils/log';
@@ -17,12 +16,6 @@ import { router as userRoutes } from './routes/user-routes';
 import { router as packRoutes } from './routes/pack-routes';
 
 export const app = express();
-export const AuthClient = new OAuthClient({
-    id: process.env.BOT_ID,
-    secret: process.env.BOT_SECRET,
-    redirectURI: `${process.env.API_URL}/auth`,
-    scopes: ['identify', 'guilds']
-});
 
 export class API {
     rootSitemap = '';
@@ -30,8 +23,7 @@ export class API {
     packsSitemap = '';
 
     constructor(
-        private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
-        private stats = Deps.get<Stats>(Stats)) {
+        private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator)) {
         app.use(rateLimiter);
         app.use(cors());
         app.use(bodyParser.json());
@@ -60,8 +52,6 @@ export class API {
 
         const port = process.env.PORT || 3000;
         app.listen(port, () => Log.info(`API is live on port ${port}`));
-        
-        this.stats.init();
     }
 
     async initSitemaps() {

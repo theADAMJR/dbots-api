@@ -4,7 +4,8 @@ import Bots from '../../data/bots';
 import { SavedBot } from '../../data/models/bot';
 import { SavedBotPack } from '../../data/models/bot-pack';
 import Deps from '../../utils/deps';
-import { APIError, getUser, sendError } from './api-utils';
+import { APIError, sendError } from './api-utils';
+import { auth } from './auth-client';
 
 const bots = Deps.get<Bots>(Bots);
 const botTokens = Deps.get<BotTokens>(BotTokens);
@@ -12,7 +13,7 @@ const botTokens = Deps.get<BotTokens>(BotTokens);
 export async function updateUser(req, res, next) {
   try {
     const key = req.get('Authorization');
-    res.locals.user ??= await getUser(key);
+    res.locals.user ??= await auth.getUser(key);
     
   } finally {
     return next();
@@ -27,7 +28,7 @@ export async function updateManageableBots(req, res, next) {
   
     return next();
   } catch (error) {
-    await sendError(res, error);
+    await sendError(req, res, error);
   }
 }
 
@@ -38,7 +39,7 @@ export async function validateBotManager(req, res, next) {
       throw new APIError('Bot not manageable.');
   
     return next();
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 }
 
 export async function validatePackOwner(req, res, next) {
@@ -52,19 +53,19 @@ export async function validatePackOwner(req, res, next) {
       throw new APIError('Bot not manageable.');
   
     return next();
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 }
 
 export async function validateUser(req, res, next) {
   return (res.locals.user)
     ? next()
-    : await sendError(res, new APIError('Unauthorized.', 401));
+    : await sendError(req, res, new APIError('Unauthorized.', 401));
 }
 
 export async function validateCanCreate(req, res, next) {
   const exists = await bots.exists(req.body.botId);
   if (exists)
-    return await sendError(res, new APIError('Bot already exists.', 400));
+    return await sendError(req, res, new APIError('Bot already exists.', 400));
   
   await bot.users.cache.get(req.body.botId)
 
@@ -73,38 +74,38 @@ export async function validateCanCreate(req, res, next) {
     .get(res.locals.user.id);
   try {
     await member.guild.fetchBan(member.user);
-    return await sendError(res, new APIError('You are banned from the guild.', 403))
+    return await sendError(req, res, new APIError('You are banned from the guild.', 403))
   } catch {}
 
   return (member)
     ? next()
-    : await sendError(res, new APIError('You must be in the DBots Discord Server to post bots.', 401)); 
+    : await sendError(req, res, new APIError('You must be in the DBots Discord Server to post bots.', 401)); 
 }
 
 export async function validateBotExistsFromBody(req, res, next) {
   const exists = await bots.exists(req.body.botId);
   return (exists)
     ? next()
-    : await sendError(res, new APIError('Bot does not exist.', 404));
+    : await sendError(req, res, new APIError('Bot does not exist.', 404));
 }
 
 export async function validatePackExists(req, res, next) {
   const exists = await SavedBotPack.exists({ _id: req.params.id });
   return (exists)
     ? next()
-    : await sendError(res, new APIError('Bot pack does not exist.', 404));
+    : await sendError(req, res, new APIError('Bot pack does not exist.', 404));
 }
 
 export async function validateBotExists(req, res, next) {
   const exists = await SavedBot.exists({ _id: req.params.id });
   return (exists)
     ? next()
-    : await sendError(res, new APIError('Bot does not exist.', 404));
+    : await sendError(req, res, new APIError('Bot does not exist.', 404));
 }
 
 export async function validateAPIKey(req, res, next) {
   const savedToken = await botTokens.get(req.params.id);
   return (savedToken.token === req.get('Authorization'))
     ? next()
-    : await sendError(res, new APIError('Invalid API token.', 401));
+    : await sendError(req, res, new APIError('Invalid API token.', 401));
 }

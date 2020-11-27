@@ -14,14 +14,14 @@ const botTokens = Deps.get<BotTokens>(BotTokens);
 const logs = Deps.get<BotLogs>(BotLogs);
 const stats = Deps.get<Stats>(Stats);
       
-router.get('/stats', validateBotExists, (req, res) => {
-  const id = req.params.id;
+router.get('/stats', validateBotExists, async (req, res) => {
+  const savedBot = await bots.get(req.params.id);
 
   res.json({
-    general: stats.general(id),
-    topVoters: stats.topVoters(id),
-    votes: stats.votes(id),
-    recentVotes: stats.recentVotes(id)
+    general: await stats.general(savedBot),
+    topVoters: await stats.topVoters(savedBot),
+    votes: savedBot.votes,
+    recentVotes: await stats.recentVotes(savedBot)
   });
 });
 
@@ -32,21 +32,21 @@ router.post('/stats', validateBotExists, validateAPIKey, async (req, res) => {
     await savedBot.save();    
 
     res.json(savedBot.stats);
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 router.get('/log', updateUser, updateManageableBots, validateBotManager, async(req, res) => {
   try {
     const log = await logs.get(req.params.id);
     res.json(log);
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 router.get('/key', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const { token } = await botTokens.get(req.params.id);
     res.json(token);
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -57,7 +57,7 @@ router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, a
     const { token } = await botTokens.get(id);
 
     res.json(token);
-  } catch (error) { await sendError(res, error); }
+  } catch (error) { await sendError(req, res, error); }
 });
 
 router.patch('/webhook',
@@ -69,5 +69,5 @@ router.patch('/webhook',
     await savedToken.save();
 
     res.json({ code: 201, message: 'Success!' });
-  } catch (error) { await sendError(res, error); }  
+  } catch (error) { await sendError(req, res, error); }  
 });

@@ -17,6 +17,7 @@ describe('start', async() => {
   await import('./integration/stats-routes.tests');
   await import('./integration/bots-routes.tests');
   await import('./integration/manage-bot-routes.tests');
+  await import('./integration/user-routes.tests');
 
   await import('./unit/stats.tests');
   await import('./unit/audit-logger.tests');

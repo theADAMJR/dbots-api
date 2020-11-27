@@ -1,16 +1,11 @@
 import { LogDocument, SavedLog } from '../../src/data/models/log';
 import Stats from '../../src/api/modules/stats';
-import Logs from '../../src/data/bot-logs';
-import { mock } from 'ts-mockito';
+import '../mocks/unit-mocks';
 
-describe('api/modules/stats', () => {
+describe('/api/modules/stats', () => {
   let savedLog: LogDocument;
-  let stats: Stats;
 
   beforeEach(async() => {
-    let logs = mock<Logs>();
-    logs.getAll = (): any => [savedLog];
-
     savedLog = new SavedLog();
     stats = new Stats();
     
@@ -31,7 +26,11 @@ describe('api/modules/stats', () => {
         changes: { old: { xpPerMessage: 50 }, new: { xpPerMessage: 100 } }
       }
     );
+  });
 
-    await stats.init();
+  describe('recent votes', () => {
+    it('', () => {
+
+    })
   });
 });

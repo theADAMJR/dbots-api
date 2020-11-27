@@ -21,10 +21,10 @@ export class ErrorLogger {
     );
   }
 
-  async api(status: number, message: string) {
+  async api(status: number, message: string, route: string) {
     await appendFile(
       `${this.logsPath}/api/${this.sessionDate}.log`,
-      `[${this.timestamp}] [${status}] ${message}\n`
+      `[${this.timestamp}] [${status}] [${route}] ${message}\n`
     );
   }
 }

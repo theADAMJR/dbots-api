@@ -3,9 +3,9 @@ import request from 'supertest';
 import { app } from '../../src/api/server';
 import { BotPackDocument, SavedBotPack } from '../../src/data/models/bot-pack';
 import { SavedUser } from '../../src/data/models/user';
-import '../mocks';
+import '../mocks/integration-mocks';
 
-describe('/src/api/routes/pack-routes', () => {
+describe('/api/routes/pack-routes', () => {
   let pack: BotPackDocument;
   const endpoint = `/api/v1`;
   const key = 'password_123';
@@ -16,10 +16,14 @@ describe('/src/api/routes/pack-routes', () => {
     pack.name = 'bot-pack-123';
     pack.owner = 'test_user_123' as any;
     await pack.save();
+
+    await SavedUser.deleteMany({});
+    await SavedUser.create({ _id: 'test_user_123' });
   });
 
   after(async() => {
     await SavedBotPack.deleteMany({});
+    await SavedUser.deleteMany({});
   });
 
   describe('GET /packs', () => {
@@ -131,11 +135,11 @@ describe('/src/api/routes/pack-routes', () => {
         ));
     });
 
-    it('user already voted, status 400', (done) => {
+    it('user already voted, status 429', (done) => {
       request(app)
         .get(`${endpoint}/packs/${pack.id}/vote`)
         .set({ Authorization: key })
-        .expect(400)
+        .expect(429)
         .end(done);
     });
   });

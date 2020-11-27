@@ -4,7 +4,7 @@ import { app } from '../../src/api/server';
 import { BotDocument, SavedBot } from '../../src/data/models/bot';
 import { BotTokenDocument, SavedBotToken } from '../../src/data/models/bot-token';
 import { SavedLog } from '../../src/data/models/log';
-import '../mocks';
+import '../mocks/integration-mocks';
 
 describe('/src/api/routes/bots/stats-routes', () => {
   let savedBot: BotDocument;
