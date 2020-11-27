@@ -1,10 +1,6 @@
-import Deps from '../../utils/deps';
-import Bots from '../../data/bots';
 import { BotDocument } from '../../data/models/bot';
 
 export default class Stats {
-  constructor(private bots = Deps.get<Bots>(Bots)) {}
-
   general(savedBot: BotDocument): GeneralStats {    
     return {
       approvedAt: savedBot.approvedAt,

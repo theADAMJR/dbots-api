@@ -23,11 +23,8 @@ describe('/api/modules/stats', () => {
     savedUser = new SavedUser({
       _id: 'test_user_123'
     });
-
-    const bots = mock<Bots>();
-    bots.getAll = async() => [savedBot];
     
-    stats = new Stats(bots);
+    stats = new Stats();
   });
 
   describe('general', () => {
@@ -52,18 +49,24 @@ describe('/api/modules/stats', () => {
     });
 
     it('0 votes on 1 day, returns 0 vote count for day', () => {
-      const secondVoteCount = stats.recentVotes(savedBot)[1].count;
+      const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+      savedBot.votes.push(
+        { at: new Date(yesterday), by: savedUser.id },
+        { at: new Date(yesterday), by: 'test_user_321' },
+      );      
+
+      const secondVoteCount = stats.recentVotes(savedBot)[0].count;
       expect(secondVoteCount).to.equal(0);
     });
 
     it('1 vote on 1 day, returns 1 vote count for day', () => {
       savedBot.votes.push({ at: new Date(), by: savedUser.id });
 
-      const result = stats.recentVotes(savedBot)[0].count;
+      const result = stats.recentVotes(savedBot)[6].count;
       expect(result).to.equal(1);
     });
 
-    it('2 votes on 1 day, returns 2 vote count for day', () => {
+    it('2 votes today, returns 2 vote count for day', () => {
       const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
       savedBot.votes.push(
         { at: yesterday, by: savedUser.id },
@@ -71,7 +74,7 @@ describe('/api/modules/stats', () => {
         { at: new Date(), by: 'test_user_321' }
       );
 
-      const secondVoteCount = stats.recentVotes(savedBot)[0].count;
+      const secondVoteCount = stats.recentVotes(savedBot)[6].count;
       expect(secondVoteCount).to.equal(2);
     });
   });
