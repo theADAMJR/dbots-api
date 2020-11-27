@@ -39,13 +39,13 @@ router.get('/', async (req, res) => {
             });
         }
         res.json({ saved: savedBots, users: botUsers });
-    } catch (error) { sendError(res, error); }
+    } catch (error) { await sendError(res, error); }
 });
 
 router.get('/user', updateUser, updateManageableBots,
     async (req, res) => res.json(res.locals.bots));
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const botUser = bot.users.cache.get(req.params.id);
         res.json({
@@ -53,7 +53,7 @@ router.get('/:id', (req, res) => {
             displayAvatarURL: botUser.displayAvatarURL({ dynamic: true, size: 256 }),
             presence: botUser.presence
         });
-    } catch (error) { sendError(res, error); }
+    } catch (error) { await sendError(res, error); }
 });
 
 router.get('/:id/vote', updateUser, async (req, res) => {
@@ -79,14 +79,14 @@ router.get('/:id/vote', updateUser, async (req, res) => {
         await postVoteWebhook(id, vote);
 
         res.json({ success: true });        
-    } catch (error) { sendError(res, error); }
+    } catch (error) { await sendError(res, error); }
 });
 
 router.get('/:id/saved', async (req, res) => {
     try {
         const savedBot = await bots.get(req.params.id);
         res.json(savedBot);
-    } catch (error) { sendError(res, error); }
+    } catch (error) { await sendError(res, error); }
 });
 
 router.get('/:id/widget', async (req, res) => {
@@ -97,7 +97,7 @@ router.get('/:id/widget', async (req, res) => {
             .generate(req.query.size?.toString() ?? 'large');
         
         res.set({ 'Content-Type': 'image/png' }).send(image);
-    } catch (error) { sendError(res, error); }
+    } catch (error) { await sendError(res, error); }
 });
 
 async function postVoteWebhook(id: string, vote: Vote) {

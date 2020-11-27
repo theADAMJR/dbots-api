@@ -1,8 +1,13 @@
 import { AuthClient } from '../server';
 import { UserDocument } from '../../data/models/user';
 import { bot } from '../../bot';
+import { ErrorLogger } from './error-logger';
+import Deps from '../../utils/deps';
 
-export function sendError(res: any, { message, status }: APIError) {
+const errorLogger = Deps.get<ErrorLogger>(ErrorLogger);
+
+export async function sendError(res: any, { message, status }: APIError) {
+  await errorLogger.api(status, message);
   return res.status(status ?? 400).json({ code: status, message });
 }
 

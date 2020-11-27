@@ -32,21 +32,21 @@ router.post('/stats', validateBotExists, validateAPIKey, async (req, res) => {
     await savedBot.save();    
 
     res.json(savedBot.stats);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.get('/log', updateUser, updateManageableBots, validateBotManager, async(req, res) => {
   try {
     const log = await logs.get(req.params.id);
     res.json(log);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.get('/key', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const { token } = await botTokens.get(req.params.id);
     res.json(token);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
@@ -57,7 +57,7 @@ router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, a
     const { token } = await botTokens.get(id);
 
     res.json(token);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.patch('/webhook',
@@ -69,5 +69,5 @@ router.patch('/webhook',
     await savedToken.save();
 
     res.json({ code: 201, message: 'Success!' });
-  } catch (error) { sendError(res, error); }  
+  } catch (error) { await sendError(res, error); }  
 });

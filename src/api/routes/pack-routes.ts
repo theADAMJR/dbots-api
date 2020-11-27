@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   try {
     const packs = await SavedBotPack.find();
     res.status(200).json(packs);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.get('/:id', async (req, res) => {
@@ -25,14 +25,14 @@ router.get('/:id', async (req, res) => {
       .exec();
 
     res.json(pack);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
     let _id = req.body.name
       ?.replace(/ /g, '-')
-      .replace(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/g, '');
+      .replace(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/g, '');
     const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
       _id += '-' + Math
@@ -48,7 +48,7 @@ router.post('/', updateUser, validateUser, async (req, res) => {
       _id
     });
     res.status(201).json(pack);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.patch('/:id', updateUser, validateUser, validatePackExists, async (req, res) => {
@@ -58,17 +58,17 @@ router.patch('/:id', updateUser, validateUser, validatePackExists, async (req, r
       .filter((value, index, self) => self.indexOf(value) === index);
     pack.description = req.body.description ?? pack.description;
     pack.updatedAt = new Date();
-    await pack.updateOne(pack); 
+    await pack.updateOne(pack);
     
     res.json(pack);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.delete('/:id', updateUser, validateUser, validatePackExists, async (req, res) => {
   try {
     await SavedBotPack.deleteOne({ _id: req.params.id });
     res.json({ code: 200, message: 'Success!' });
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });
 
 router.get('/:id/vote', updateUser, validateUser, async (req, res) => {
@@ -84,5 +84,5 @@ router.get('/:id/vote', updateUser, validateUser, async (req, res) => {
     await pack.save();
 
     res.status(200).json(pack);
-  } catch (error) { sendError(res, error); }
+  } catch (error) { await sendError(res, error); }
 });

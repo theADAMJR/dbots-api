@@ -8,7 +8,7 @@ import { ChannelLog } from '../api/modules/channel-log';
 export default class DeleteCommand implements Command {
     name = 'delete';
     aliases = ['remove'];
-    precondition: Permission = 'ADMINISTRATOR';
+    precondition: Permission = 'MANAGE_GUILD';
 
     constructor(
         private bots = Deps.get<Bots>(Bots),

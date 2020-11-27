@@ -1,6 +1,10 @@
 import { Collection } from 'discord.js';
+import { ErrorLogger } from '../src/api/modules/error-logger';
 import { AuthClient } from '../src/api/server';
 import { bot } from '../src/bot';
+import Deps from '../src/utils/deps';
+
+(Deps.get(ErrorLogger) as any).api = () => {};
 
 const user = {
   id: 'test_user_123',

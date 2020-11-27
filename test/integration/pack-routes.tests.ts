@@ -12,8 +12,8 @@ describe('/src/api/routes/pack-routes', () => {
 
   before(async() => {
     pack = new SavedBotPack();
-    pack._id = 'bot_pack_123';
-    pack.name = 'bot_pack_123'
+    pack._id = 'bot-pack-123';
+    pack.name = 'bot-pack-123';
     pack.owner = 'test_user_123' as any;
     await pack.save();
   });
@@ -36,6 +36,13 @@ describe('/src/api/routes/pack-routes', () => {
   });
 
   describe('POST /packs', () => {
+    it('user not logged in, status 401', (done) => {
+      request(app)
+        .post(`${endpoint}/packs`)
+        .send(pack)
+        .expect(401)
+        .end(done);
+    });
     it('duplicate id pack is created, name is changed', (done) => {
       request(app)
         .post(`${endpoint}/packs`)
@@ -51,6 +58,14 @@ describe('/src/api/routes/pack-routes', () => {
   });
 
   describe('PATCH /packs/:id', () => {
+    it('user not logged in, status 401', (done) => {
+      request(app)
+        .patch(`${endpoint}/packs/${pack.id}`)
+        .send(pack)
+        .expect(401)
+        .end(done);
+    });
+
     it('sends updated pack', (done) => {
       pack.description = 'Updated bot pack.';
 

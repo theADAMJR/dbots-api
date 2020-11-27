@@ -1,13 +1,11 @@
 import Bots from '../data/bots';
-import Users from '../data/users';
-import { handleFeedback } from '../modules/reviewal';
-import { getIDFromMention, getMemberFromMention } from '../utils/command-utils';
+import { getIDFromMention } from '../utils/command-utils';
 import Deps from '../utils/deps';
 import { Command, CommandContext, Permission } from './command';
 
 export default class AddBadgeCommand implements Command {
     name = 'add-badge';
-    precondition: Permission = 'ADMINISTRATOR';
+    precondition: Permission = 'MANAGE_GUILD';
 
     constructor(private bots = Deps.get<Bots>(Bots)) {}
     

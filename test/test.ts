@@ -12,6 +12,7 @@ describe('start', async() => {
     });
   });
     
+  await import('./integration/api-routes.tests');
   await import('./integration/pack-routes.tests');
   await import('./integration/stats-routes.tests');
   await import('./integration/bots-routes.tests');

@@ -5,7 +5,7 @@ import { Command, CommandContext, Permission } from './command';
 
 export default class ClearBadgesCommand implements Command {
     name = 'clear-badges';
-    precondition: Permission = 'ADMINISTRATOR';
+    precondition: Permission = 'MANAGE_GUILD';
 
     constructor(private bots = Deps.get<Bots>(Bots)) {}
     
