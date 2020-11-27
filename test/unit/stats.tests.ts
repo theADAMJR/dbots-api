@@ -33,13 +33,6 @@ describe('/api/modules/stats', () => {
       expect(result).to.have
         .keys('approvedAt', 'guildCount', 'lastVoteAt', 'totalVotes', 'voteCount');
     });
-
-    it('no stats provided, guild count returns undefined', () => {
-      savedBot.stats = null;
-
-      const result = stats.general(savedBot).guildCount;
-      expect(result).to.be.undefined;
-    });
   });
 
   describe('recent votes', () => {

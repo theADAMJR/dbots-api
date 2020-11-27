@@ -2,23 +2,25 @@ import { assert } from 'chai';
 import request from 'supertest';
 import { app } from '../../src/api/server';
 import { BotPackDocument, SavedBotPack } from '../../src/data/models/bot-pack';
-import { SavedUser } from '../../src/data/models/user';
+import { SavedUser, UserDocument } from '../../src/data/models/user';
 import '../mocks/integration-mocks';
 
 describe('/api/routes/pack-routes', () => {
-  let pack: BotPackDocument;
+  let savedPack: BotPackDocument;
+  let savedUser: UserDocument;
+
   const endpoint = `/api/v1`;
   const key = 'password_123';
 
   before(async() => {
-    pack = new SavedBotPack();
-    pack._id = 'bot-pack-123';
-    pack.name = 'bot-pack-123';
-    pack.owner = 'test_user_123' as any;
-    await pack.save();
+    savedPack = new SavedBotPack();
+    savedPack._id = 'bot-pack-123';
+    savedPack.name = 'bot-pack-123';
+    savedPack.owner = 'test_user_123' as any;
+    await savedPack.save();
 
     await SavedUser.deleteMany({});
-    await SavedUser.create({ _id: 'test_user_123' });
+    savedUser = await SavedUser.create({ _id: 'test_user_123' });
   });
 
   after(async() => {
@@ -43,20 +45,32 @@ describe('/api/routes/pack-routes', () => {
     it('user not logged in, status 401', (done) => {
       request(app)
         .post(`${endpoint}/packs`)
-        .send(pack)
+        .send(savedPack)
         .expect(401)
         .end(done);
     });
+
     it('duplicate id pack is created, name is changed', (done) => {
       request(app)
         .post(`${endpoint}/packs`)
         .set({ Authorization: key })
-        .send(pack)
+        .send(savedPack)
         .expect(201)
         .expect(res => assert(
-          res.body._id.startsWith(pack._id),
+          res.body._id.startsWith(savedPack._id),
           'Pack name should be unique.'
         ))
+        .end(done);
+    });
+    
+    it('pack name contains special characters, status 400', (done) => {
+      savedPack.name = '🤔 this should not work';
+
+      request(app)
+        .post(`${endpoint}/packs`)
+        .set({ Authorization: key })
+        .send(savedPack)
+        .expect(400)
         .end(done);
     });
   });
@@ -64,83 +78,107 @@ describe('/api/routes/pack-routes', () => {
   describe('PATCH /packs/:id', () => {
     it('user not logged in, status 401', (done) => {
       request(app)
-        .patch(`${endpoint}/packs/${pack.id}`)
-        .send(pack)
+        .patch(`${endpoint}/packs/${savedPack.id}`)
+        .send(savedPack)
         .expect(401)
-        .end(done);
-    });
-
-    it('sends updated pack', (done) => {
-      pack.description = 'Updated bot pack.';
-
-      request(app)
-        .patch(`${endpoint}/packs/${pack.id}`)
-        .send(pack)
-        .set({ Authorization: key })
-        .expect(200)
-        .expect(res => assert(
-          res.body.updatedAt !== pack.updatedAt
-          && res.body.description === pack.description,
-          'Sent pack should be updated.'
-        ))
         .end(done);
     });
 
     it('bot pack does not exist, sends 404', (done) => {
       request(app)
         .patch(`${endpoint}/packs/231i9312j38273yh213h21877y323`)
-        .send(pack)
+        .send(savedPack)
         .set({ Authorization: key })
         .expect(404)
+        .end(done);
+    });
+
+    it('body valid, sends updated pack', (done) => {
+      savedPack.description = 'Updated bot pack.';
+
+      request(app)
+        .patch(`${endpoint}/packs/${savedPack.id}`)
+        .send(savedPack)
+        .set({ Authorization: key })
+        .expect(200)
+        .expect(res => assert(
+          res.body.updatedAt !== savedPack.updatedAt
+          && res.body.description === savedPack.description,
+          'Sent pack should be updated.'
+        ))
         .end(done);
     });
   });
 
   describe('DELETE /packs', () => {
-    it('deletes pack id', async () => {
+    it('user not logged in, status 401', (done) => {
       request(app)
-        .delete(`${endpoint}/packs/${pack.id}`)
-        .set({ Authorization: key })
-        .expect(200);
-
-      assert(
-        !await SavedBotPack.exists(pack),
-        'Pack should no longer exist.'
-      );
+        .delete(`${endpoint}/packs/${savedPack.id}`)
+        .send(savedPack)
+        .expect(401)
+        .end(done);
     });
 
-    it('bot pack does not exist, sends 404', (done) => {
+    it('bot pack does not exist, status 404', (done) => {
       request(app)
         .delete(`${endpoint}/packs/231i9312j38273yh213h21877y323`)
-        .send(pack)
+        .send(savedPack)
         .set({ Authorization: key })
         .expect(404)
         .end(done);
     });
+
+    it('pack exists, deletes pack', async () => {
+      request(app)
+        .delete(`${endpoint}/packs/${savedPack.id}`)
+        .set({ Authorization: key })
+        .expect(200);
+
+      assert(
+        !await SavedBotPack.exists(savedPack),
+        'Pack should no longer exist.'
+      );
+    });
   });
 
   describe('GET /packs/:id/vote', () => {
+    it('user not logged in, status 401', (done) => {
+      request(app)
+        .get(`${endpoint}/packs/${savedPack.id}/vote`)
+        .expect(401)
+        .end(done);
+    });
+
+    it('pack does not exist, status 404', (done) => {
+      request(app)
+        .get(`${endpoint}/packs/213h89213218h93217893gh/vote`)
+        .set({ Authorization: key })
+        .expect(404)
+        .end(done);
+    });
+
+    it('user already voted, status 429', async () => {
+      savedUser.lastVotedAt = new Date();
+      await savedUser.save();
+
+      return request(app)
+        .get(`${endpoint}/packs/${savedPack.id}/vote`)
+        .set({ Authorization: key })
+        .expect(429);
+    });
+
     it('pack votes increased by 1', async () => {
-      const savedUser = await SavedUser.findById('test_user_123');
       savedUser.lastVotedAt = null;
       await savedUser.save();
 
       return request(app)
-        .get(`${endpoint}/packs/${pack.id}/vote`)
+        .get(`${endpoint}/packs/${savedPack.id}/vote`)
         .set({ Authorization: key })
         .expect(200)
         .expect(res => assert(
-          res.body.votes === pack.votes + 1,
+          res.body.votes === savedPack.votes + 1,
           'Votes should be increased by 1.'
         ));
-    });
-
-    it('user already voted, status 429', (done) => {
-      request(app)
-        .get(`${endpoint}/packs/${pack.id}/vote`)
-        .set({ Authorization: key })
-        .expect(429)
-        .end(done);
     });
   });
 });

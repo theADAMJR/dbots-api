@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { SavedBotPack } from '../../data/models/bot-pack';
 import Users from '../../data/users';
 import Deps from '../../utils/deps';
-import { sendError, validateIfCanVote as validateCanVote } from '../modules/api-utils';
+import { APIError, sendError, validateIfCanVote as validateCanVote } from '../modules/api-utils';
 import { updateUser, validatePackExists, validateUser } from '../modules/middleware';
 
 const users = Deps.get<Users>(Users);
@@ -30,9 +30,11 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    let _id = req.body.name
-      ?.replace(/ /g, '-')
-      .replace(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/g, '');
+    const nameValid = /^([A-Za-z\d -])+$/g.test(req.body.name);
+    if (!nameValid)
+      throw new APIError('Pack name should not contain special characters.')
+
+    let _id = req.body.name;
     const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
       _id += '-' + Math
@@ -51,7 +53,9 @@ router.post('/', updateUser, validateUser, async (req, res) => {
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.patch('/:id', updateUser, validateUser, validatePackExists, async (req, res) => {
+router.patch('/:id',
+  updateUser, validateUser, validatePackExists,
+  async (req, res) => {
   try {
     const pack = await SavedBotPack.findById(req.params.id);
     pack.bots = (req.body.bots ?? pack.bots)
@@ -64,14 +68,18 @@ router.patch('/:id', updateUser, validateUser, validatePackExists, async (req, r
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.delete('/:id', updateUser, validateUser, validatePackExists, async (req, res) => {
+router.delete('/:id',
+  updateUser, validateUser, validatePackExists,
+  async (req, res) => {
   try {
     await SavedBotPack.deleteOne({ _id: req.params.id });
     res.json({ code: 200, message: 'Success!' });
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/:id/vote', updateUser, validateUser, async (req, res) => {
+router.get('/:id/vote',
+  updateUser, validateUser, validatePackExists,
+  async (req, res) => {
   try {
     const savedUser = await users.get(res.locals.user);
     validateCanVote(savedUser);

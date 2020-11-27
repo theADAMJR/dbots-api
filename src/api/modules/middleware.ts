@@ -66,8 +66,6 @@ export async function validateCanCreate(req, res, next) {
   const exists = await bots.exists(req.body.botId);
   if (exists)
     return await sendError(req, res, new APIError('Bot already exists.', 400));
-  
-  await bot.users.cache.get(req.body.botId)
 
   const member = bot.guilds.cache
     .get(process.env.GUILD_ID)?.members.cache
