@@ -5,15 +5,16 @@ import { WebSocket } from '../websocket';
 import WSEvent from './ws-event';
 
 export default class implements WSEvent {
-  on = 'BOT_IMPRESSION';
+  on = 'BOT_PAGE_VIEW';
 
   constructor(private logs = Deps.get<BotLogs>(BotLogs)) {}
 
   async invoke(ws: WebSocket, client: Socket, { botId }) {
+    let log = await this.logs.logAnalytic('impressions', botId);
+    log = await this.logs.logAnalytic('views', botId);
+
     ws.io.sockets
       .to(botId)
-      .emit('BOT_IMPRESSION', {
-        log: await this.logs.logAnalytic('impressions', botId)
-      });
+      .emit('BOT_PAGE_VIEW', { log });
   }
 }

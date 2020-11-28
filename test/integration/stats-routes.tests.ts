@@ -86,21 +86,21 @@ describe('/src/api/routes/bots/stats-routes', () => {
     });
   });
 
-  describe('GET /key', () => {
-    it('get bot log, sends bot log', (done) => {
+  describe('GET /api', () => {
+    it('get bot api, sends bot api document', (done) => {
       request(app)
-        .get(`${endpoint}/bots/${savedBot.id}/key`)
+        .get(`${endpoint}/bots/${savedBot.id}/api`)
         .set({ Authorization: key })
         .expect(200)
         .expect(res => assert(
-          res.body === apiKey,
+          res.body.token === apiKey,
           'Response body should return API key.'
         ))
         .end(done);
     });
   });
 
-  describe('GET /key', () => {
+  describe('GET /key/regen', () => {
     it('get bot log, sends bot log', (done) => {
       request(app)
         .get(`${endpoint}/bots/${savedBot.id}/key/regen`)
@@ -114,17 +114,17 @@ describe('/src/api/routes/bots/stats-routes', () => {
     });
   });
 
-  describe('PATCH /bots/:id/webhook', () => {
+  describe('PATCH /bots/:id/api', () => {
     it('user not logged in, status 401', (done) => {
       request(app)
-        .patch(`${endpoint}/bots/${savedBot.id}/webhook`)
+        .patch(`${endpoint}/bots/${savedBot.id}/api`)
         .expect(401)
         .end(done);
     });
 
     it('bot not found, status 404', (done) => {
       request(app)
-        .patch(`${endpoint}/bots/123012u38123u218392183/webhook`)
+        .patch(`${endpoint}/bots/123012u38123u218392183/api`)
         .set({ Authorization: key })
         .expect(404)
         .end(done);
@@ -132,7 +132,7 @@ describe('/src/api/routes/bots/stats-routes', () => {
 
     it('valid body, bot updated', async () => {
       await request(app)
-        .patch(`${endpoint}/bots/${savedBot.id}/webhook`)
+        .patch(`${endpoint}/bots/${savedBot.id}/api`)
         .set({ Authorization: key })
         .send({ voteWebhookURL: 'https://dbots.co' })
         .expect(200);

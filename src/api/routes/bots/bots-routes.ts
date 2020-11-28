@@ -49,12 +49,12 @@ router.get('/:id', validateBotExists, async (req, res) => {
   try {
     const botUser = bot.users.cache.get(req.params.id);
     res.json({
-        saved: await bots.get(req.params.id),
-        user: {
-            ...botUser,
-            displayAvatarURL: botUser.displayAvatarURL({ dynamic: true, size: 256 }),
-            presence: botUser.presence
-        }
+      saved: await bots.get(req.params.id),
+      user: {
+        ...botUser,
+        displayAvatarURL: botUser.displayAvatarURL({ dynamic: true, size: 256 }),
+        presence: botUser.presence
+      }
     });
   } catch (error) { await sendError(req, res, error); }
 });
@@ -99,7 +99,10 @@ async function postVoteWebhook(id: string, vote: Vote) {
   try {
     await fetch(savedToken.voteWebhookURL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': savedToken.token
+      },
       body: JSON.stringify(vote)
     });
   } catch {}

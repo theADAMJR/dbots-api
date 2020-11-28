@@ -42,13 +42,6 @@ router.get('/log', updateUser, updateManageableBots, validateBotManager, async(r
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/key', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
-  try {
-    const { token } = await botTokens.get(req.params.id);
-    res.json(token);
-  } catch (error) { await sendError(req, res, error); }
-});
-
 router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
   try {
     const id = req.params.id;
@@ -60,7 +53,14 @@ router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, a
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.patch('/webhook',
+router.get('/api', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+  try {
+    const savedToken = await botTokens.get(req.params.id);
+    res.json(savedToken);
+  } catch (error) { await sendError(req, res, error); }
+});
+
+router.patch('/api',
   updateUser, validateUser, updateManageableBots, validateBotExists, validateBotManager,
   async (req, res) => {
   try {

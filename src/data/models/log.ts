@@ -8,9 +8,12 @@ export class Change {
   public changes: { old: {}, new: {}}) {}
 }
 
+export type Analytic = 'ctr' | 'impressions' | 'invites' | 'views';
+
 export class BotAnalytics {
   ctr = [0]; // views / impressions
   impressions = [0]; // how many people see the bot
+  invites = [0]; // % of viewers that invite the bot
   inviteRate = [0]; // % of viewers that invite the bot
   views = [0]; // number of bot page views
   lastUpdatedAt = new Date();

@@ -8,6 +8,7 @@ import AuditLogger from '../../modules/audit-logger';
 import { addDevRole, APIError, apiResponse, kickMember, sendError } from '../../modules/api-utils';
 import { updateManageableBots, updateUser, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import { ChannelLog } from '../../modules/channel-log';
+import BotTokens from '../../../data/bot-tokens';
 
 export const router = Router();
 
@@ -15,6 +16,7 @@ const auditLogger = Deps.get<AuditLogger>(AuditLogger);
 const bots = Deps.get<Bots>(Bots);
 const channelLog = Deps.get<ChannelLog>(ChannelLog);
 const logs = Deps.get<BotLogs>(BotLogs);
+const tokens = Deps.get<BotTokens>(BotTokens);
 
 router.post('/',
   updateUser, validateUser, validateCanCreate,

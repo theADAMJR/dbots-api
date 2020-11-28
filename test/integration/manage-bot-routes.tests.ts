@@ -118,7 +118,7 @@ describe('routes/api/bots/manage-bot-routes', () => {
         .end(done);
     });
 
-    it('bot exists, deletes bot, sends default response', (done) => {
+    it('bot manageable, deletes bot, sends default response', (done) => {
       request(app)
         .delete(`${endpoint}/bots/${botId}`)
         .set({ Authorization: key })
