@@ -4,8 +4,8 @@ import bodyParser from 'body-parser';
 import rateLimiter from './modules/rate-limiter';
 import Log from '../utils/log';
 import Deps from '../utils/deps';
-import Stats from './modules/stats';
 import { resolve } from 'path';
+import { WebSocket } from '../api/websocket/websocket';
 import SitemapGenerator from './modules/sitemap-generator';
 
 import { router as apiRoutes } from './routes/api-routes';
@@ -23,7 +23,8 @@ export class API {
     packsSitemap = '';
 
     constructor(
-        private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator)) {
+        private sitemapGenerator = Deps.get<SitemapGenerator>(SitemapGenerator),
+        private ws = Deps.get<WebSocket>(WebSocket)) {
         app.use(rateLimiter);
         app.use(cors());
         app.use(bodyParser.json());
@@ -51,7 +52,9 @@ export class API {
             .sendFile(`${dashboardPath}/index.html`));
 
         const port = process.env.PORT || 3000;
-        app.listen(port, () => Log.info(`API is live on port ${port}`));
+        const server = app.listen(port, () => Log.info(`API is live on port ${port}`));
+
+        this.ws.init(server);
     }
 
     async initSitemaps() {

@@ -20,7 +20,7 @@ export class ChannelLog {
   async leftServer(savedBot: BotDocument) {
     await this.sendLog(
       'Bot Deleted',
-      `<@!${savedBot.ownerId}> left the server, so <@!${savedBot.id}> was deleted.`,
+      `<@!${savedBot.ownerId}> left the server, so <@!${savedBot.id}> was hidden from the list.`,
       HexColor.Red
     );
   }

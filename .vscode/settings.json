@@ -1,8 +1,5 @@
 {
-  "mochaExplorer.files": "test/unit/*.tests.ts",
-  "mochaExplorer.require": "ts-node/register",
-  "mochaExplorer.logpanel": true,
-  "debug.javascript.warnOnLongPrediction": false,
+  "editor.tabSize": 2,
   "cSpell.words": [
     "regen"
   ]

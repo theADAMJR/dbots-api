@@ -20,7 +20,8 @@ const users = Deps.get<Users>(Users);
 router.get('/', async (req, res) => {
   try {
     const botUsers = [];
-    const savedBots = await SavedBot.find();
+    const savedBots = (await SavedBot.find())
+      .slice(+req.params.start || 0, +req.params.end || 100);
 
     for (const savedBot of savedBots) {
       const botUser = bot.users.cache.get(savedBot.id);

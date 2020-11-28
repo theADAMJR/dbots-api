@@ -6,7 +6,7 @@ import BotLogs from '../../../data/bot-logs';
 import { Listing, SavedBot } from '../../../data/models/bot';
 import AuditLogger from '../../modules/audit-logger';
 import { addDevRole, APIError, apiResponse, kickMember, sendError } from '../../modules/api-utils';
-import { updateManageableBots, updateUser, validateBotExists, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
+import { updateManageableBots, updateUser, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import { ChannelLog } from '../../modules/channel-log';
 
 export const router = Router();

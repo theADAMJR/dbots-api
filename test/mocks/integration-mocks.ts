@@ -4,9 +4,12 @@ import { auth } from '../../src/api/modules/auth-client';
 import { ErrorLogger } from '../../src/api/modules/error-logger';
 import { bot } from '../../src/bot';
 import Deps from '../../src/utils/deps';
+import rateLimit from '../../src/api/modules/rate-limiter';
 
 // comment to log test API errors
 (Deps.get(ErrorLogger) as any).api = () => {};
+// comment whether to test rate limiting
+(rateLimit as any).skip = () => true;
 
 const user = {
   id: 'test_user_123',
