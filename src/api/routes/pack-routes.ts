@@ -34,7 +34,9 @@ router.post('/', updateUser, validateUser, async (req, res) => {
     if (!nameValid)
       throw new APIError('Pack name should not contain special characters.')
 
-    let _id = req.body.name;
+    let _id = req.body.name
+      .toLowerCase()
+      .replace(/ /g, '-');
     const nameExists = await SavedBotPack.exists({ _id });
     if (nameExists) {
       _id += '-' + Math

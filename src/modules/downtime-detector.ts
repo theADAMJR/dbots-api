@@ -41,6 +41,7 @@ export class DowntimeDetector {
     const channelId = process.env.DOWNTIME_CHANNEL_ID;
     const channel = bot.channels.cache.get(channelId) as TextChannel;
     await channel.send(
+      `<@!${ownerId}>`,
       new MessageEmbed()
         .setTitle('Bot Offline')
         .setDescription(`<@!${ownerId}>, your bot <@!${botId}> has been offline for over 15 minutes.`)
