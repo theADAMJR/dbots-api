@@ -5,6 +5,7 @@ import { bot } from '../../bot';
 import Deps from '../../utils/deps';
 import { API } from '../../api/server';
 import CommandService from '../command.service';
+import { DowntimeDetector } from '../../modules/downtime-detector';
 
 export default class ReadyHandler implements EventHandler {
     on = 'ready';
@@ -12,7 +13,8 @@ export default class ReadyHandler implements EventHandler {
 
     constructor(
         private api = Deps.get<API>(API),
-        private commands = Deps.get<CommandService>(CommandService)) {}
+        private commands = Deps.get<CommandService>(CommandService),
+        private downtime = Deps.get<DowntimeDetector>(DowntimeDetector)) {}
 
     async invoke() {
         if (this.initialized) return;

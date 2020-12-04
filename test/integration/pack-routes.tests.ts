@@ -13,6 +13,9 @@ describe('/api/routes/pack-routes', () => {
   const key = 'password_123';
 
   before(async() => {
+    await SavedBotPack.deleteMany({});
+    await SavedUser.deleteMany({});
+
     savedPack = new SavedBotPack();
     savedPack._id = 'bot-pack-123';
     savedPack.name = 'bot-pack-123';

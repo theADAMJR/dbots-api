@@ -1,10 +1,11 @@
 import { config } from 'dotenv';
-
 config({ path: 'test/.env' });
 
+import { use } from 'chai';
 import { connect } from 'mongoose';
+import spies from 'chai-spies';
 
-describe('start', async() => {
+describe.skip('start', async() => {
   before(async() => {
     await connect(process.env.MONGO_URI, {
       useFindAndModify: true,
@@ -23,4 +24,5 @@ describe('start', async() => {
   await import('./unit/audit-logger.tests');
   await import('./unit/bot-logs.tests');
   await import('./unit/stats.tests');
+  await import('./unit/downtime-detector.tests');
 });

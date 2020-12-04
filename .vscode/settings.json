@@ -2,5 +2,7 @@
   "editor.tabSize": 2,
   "cSpell.words": [
     "regen"
-  ]
+  ],
+  "mochaExplorer.files": "test/**/*.ts",
+  "mochaExplorer.require": "ts-node/register"
 }

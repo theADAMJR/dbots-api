@@ -8,7 +8,7 @@ import rateLimit from '../../src/api/modules/rate-limiter';
 
 // comment to log test API errors
 (Deps.get(ErrorLogger) as any).api = () => {};
-// comment whether to test rate limiting
+// comment whether to enable test rate limiting
 (rateLimit as any).skip = () => true;
 
 const user = {
