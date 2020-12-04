@@ -13,7 +13,9 @@ export class DowntimeDetector {
   async checkBots() {
     const savedBots = await SavedBot.find();
     for (const { id, ownerId } of savedBots) {
-      const botUser = bot.users.cache.get(id);
+      const botUser = bot.guilds.cache
+        .get(process.env.GUILD_ID)?.members.cache
+        .get(id);
       if (!botUser) continue;
 
       const isOffline = botUser.presence.status === 'offline';
@@ -41,7 +43,6 @@ export class DowntimeDetector {
     const channelId = process.env.DOWNTIME_CHANNEL_ID;
     const channel = bot.channels.cache.get(channelId) as TextChannel;
     await channel.send(
-      `<@!${ownerId}>`,
       new MessageEmbed()
         .setTitle('Bot Offline')
         .setDescription(`<@!${ownerId}>, your bot <@!${botId}> has been offline for over 15 minutes.`)
