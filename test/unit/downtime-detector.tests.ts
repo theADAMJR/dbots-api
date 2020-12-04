@@ -48,9 +48,7 @@ describe('/modules/uptime-detector', () => {
     });
     await detector.checkBots();
 
-    const log = detector.log.get('bot_user_123');
-    console.log(detector.log);
-    
+    const log = detector.log.get('bot_user_123');    
 
     expect(log.logged).to.be.true;
   });

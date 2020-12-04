@@ -43,6 +43,10 @@ router.post('/', updateUser, validateUser, async (req, res) => {
         .padStart(6, '0');
     }
 
+    const ownerPacks = await SavedBotPack.count({ owner: res.locals.user.id });
+    if (ownerPacks >= 5)
+      throw new APIError('Max bot pack limit reached.', 400);
+
     const pack = await SavedBotPack.create({
       ...req.body,
       createdAt: new Date(),

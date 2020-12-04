@@ -76,6 +76,23 @@ describe('/api/routes/pack-routes', () => {
         .expect(400)
         .end(done);
     });
+    
+    it('user owns max bot packs, status 400', async () => {
+      await SavedBotPack.create(
+        { _id: 'bot-pack-124', ownerId: savedPack.owner },
+        { _id: 'bot-pack-125', ownerId: savedPack.owner },
+        { _id: 'bot-pack-126', ownerId: savedPack.owner },
+        { _id: 'bot-pack-127', ownerId: savedPack.owner },
+      );
+
+      savedPack.name = '🤔 this should not work';
+
+      return request(app)
+        .post(`${endpoint}/packs`)
+        .set({ Authorization: key })
+        .send(savedPack)
+        .expect(400);
+    });
   });
 
   describe('PATCH /packs/:id', () => {
