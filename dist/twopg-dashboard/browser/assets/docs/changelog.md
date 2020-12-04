@@ -6,7 +6,29 @@
 
 ---
 
+## Release
+
+---
+
 ## Beta
+
+---
+
+## v1.0.0b
+
+**Add**:
+- too much to list
+- updated theme
+- bot packs
+- real time bot analytics
+- many many integration tests
+- next gen theme
+- easier and quicker navigation
+- vote webhooks
+
+**Change/Fix**:
+- bot guidelines updated
+- links from navbar moved to footer
 
 ---
 
