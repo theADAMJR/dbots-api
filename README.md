@@ -1,7 +1,18 @@
-# DBots API
-Bot for DBots.
+# DBots - API
+Quickly and easily find Discord bots. Comes with prebuilt website; just uncomment lines in [api/server.ts](tree/stable/src/api/server.ts) to get this to work.
+
+![Discord](https://img.shields.io/discord/236608364333891585?color=6ca294&amp;label=Support&amp;style=for-the-badge)
+![Lines of Code](https://img.shields.io/tokei/lines/github/DBots-co/API?color=6ca294&style=for-the-badge)
+![Repo Stars](https://img.shields.io/github/stars/DBots-co/API?color=6ca294&style=for-the-badge)
+
+![Website Preview](https://i.ibb.co/mJKfRLK/image.png)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/dbots-co/api)
+
+## License Notice
+![License Notice](https://i.ibb.co/Q8vQDTs/image.png)
+- Keep your repository open source, with same license.
+- Link to your repository on website (if editing, it links here by default).
 
 ---
 
@@ -9,14 +20,12 @@ Projects to Host Series - https://www.youtube.com/watch?v=ARkTLD_j2cM&list=PLGfT
 
 **Website**: https://github.com/DBots-co/Website
 
-![API](https://socialify.git.ci/DBots-co/API/image?description=1&descriptionEditable=API%20Routes%2FServer%20files%20for%20dbots.co&font=Source%20Code%20Pro&forks=1&issues=1&language=1&logo=https%3A%2F%2Favatars0.githubusercontent.com%2Fu%2F70011081%3Fs%3D200%26v%3D4&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Dark)
-
 ## Installation
-1) Fork/download this respository
+1) Fork/download this repository
 2) `npm i` to install packages
 3) Setup `.env`
 
-### .env
+### `.env`
 This file is used for storing private data and secrets.
 It must be created for the app to run correctly.
 

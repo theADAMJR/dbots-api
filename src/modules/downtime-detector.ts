@@ -28,7 +28,7 @@ export class DowntimeDetector {
 
       if (log && this.hasBeen15Mins(log.since) && !log.logged) {
         log.logged = true;
-        await this.logLongDowntime(id, ownerId);
+        await this.logLongDowntime(botUser.user.username, ownerId);
       }
     }
   }
@@ -39,13 +39,13 @@ export class DowntimeDetector {
     return timeGapMs > fifteenMinsMs;
   }
 
-  private async logLongDowntime(botId: string, ownerId: string) {
+  private async logLongDowntime(botUsername: string, ownerId: string) {
     const channelId = process.env.DOWNTIME_CHANNEL_ID;
     const channel = bot.channels.cache.get(channelId) as TextChannel;
-    await channel.send(
+    await channel?.send(
       new MessageEmbed()
         .setTitle('Bot Offline')
-        .setDescription(`<@!${ownerId}>, your bot <@!${botId}> has been offline for over 15 minutes.`)
+        .setDescription(`<@!${ownerId}>, your bot \`${botUsername}\` has been offline for over 15 minutes.`)
     );
   }
 }

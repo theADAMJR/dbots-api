@@ -43,6 +43,11 @@
       "value": "",
       "required": false
     },
+    "DOWNTIME_CHANNEL_ID": {
+      "description": "ID of the bot downtime notification channel.",    
+      "value": "",
+      "required": false
+    },
     "BOT_ROLE_ID": {
       "description": "ID of the bot role, given to bots that join the guild.",    
       "value": "",
