@@ -13,13 +13,13 @@ export class ChannelLog {
   async deleted(botId: string, instigatorId: string, reason?: string) {
     await this.sendLog(
       `Bot Deleted`,
-      reason ?? `<@!${instigatorId}> deleted <@!${botId}> for some reason.`,
+      `<@!${instigatorId}> deleted <@!${botId}> - <${reason}>.`,
       HexColor.Red
     );
   }
   async leftServer(savedBot: BotDocument) {
     await this.sendLog(
-      'Bot Deleted',
+      'Bot Hidden',
       `<@!${savedBot.ownerId}> left the server, so <@!${savedBot.id}> was hidden from the list.`,
       HexColor.Red
     );
