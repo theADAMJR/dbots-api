@@ -13,7 +13,7 @@ export class ChannelLog {
   async deleted(botId: string, instigatorId: string, reason?: string) {
     await this.sendLog(
       `Bot Deleted`,
-      `<@!${instigatorId}> deleted <@!${botId}> - \`<${reason}>\``,
+      `<@!${instigatorId}> deleted <@!${botId}> - \`${reason}\``,
       HexColor.Red
     );
   }
