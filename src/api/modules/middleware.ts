@@ -25,6 +25,7 @@ export async function updateManageableBots(req, res, next) {
     const savedBots = await bots.getManageable(res.locals.user);
     res.locals.bots = bot.users.cache
       .filter(u => savedBots.some(sb => sb.id === u.id));
+    res.locals.savedBots = savedBots;
   
     return next();
   } catch (error) {

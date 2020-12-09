@@ -53,6 +53,22 @@ describe('/api/routes/user-routes', () => {
         .end(done);
     });
   });
+
+  describe('GET /user/:id/partial', () => {
+    it('non existing user, status 404', (done) => {
+      request(app)
+        .get(`${endpoint}/user/219y732183g2187321g3/partial`)
+        .expect(404)
+        .end(done);
+    });
+    
+    it('existing user, status 200', (done) => {
+      request(app)
+        .get(`${endpoint}/user/${process.env.CLIENT_ID}/partial`)
+        .expect(200)
+        .end(done);
+    });
+  });
 });
 
 async function cleanDatabase() {

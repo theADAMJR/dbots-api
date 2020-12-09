@@ -10,18 +10,19 @@ import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
 import { updateManageableBots, updateUser, validateBotExists, validateUser } from '../../modules/middleware';
 import { getWeek } from '../../../utils/command-utils';
+import { PartialUsers } from '../../modules/partial-users';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots);
 const botTokens = Deps.get<BotTokens>(BotTokens);
+const partial = Deps.get<PartialUsers>(PartialUsers);
 const users = Deps.get<Users>(Users);
 
 router.get('/', async (req, res) => {
   try {
     const botUsers = [];
-    const savedBots = (await SavedBot.find())
-      .slice(+req.params.start || 0, +req.params.end || 100);
+    const savedBots = await SavedBot.find();
 
     for (const savedBot of savedBots) {
       const botUser = bot.users.cache.get(savedBot.id);
@@ -43,7 +44,20 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/user', updateUser, validateUser, updateManageableBots,
-  async (req, res) => res.json(res.locals.bots));
+  async (req, res) => {
+    const savedBots = res.locals.savedBots;
+    const partialUsers = [];
+   
+    for (const { id } of savedBots) {
+      const hasValidId = /\d{18}/.test(id);
+      if (!hasValidId) return;
+
+      const user = await partial.get(id);
+      partialUsers.push(user);
+    }
+
+    res.json({ partialUsers, saved: savedBots });
+});
 
 router.get('/:id', validateBotExists, async (req, res) => {
   try {
@@ -59,7 +73,9 @@ router.get('/:id', validateBotExists, async (req, res) => {
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/:id/vote', updateUser, validateUser, validateBotExists, async (req, res) => {
+router.get('/:id/vote',
+  updateUser, validateUser, validateBotExists,
+  async (req, res) => {
   try {    
     const voter = res.locals.user;
     const savedVoter = await users.get(voter);
@@ -69,14 +85,7 @@ router.get('/:id/vote', updateUser, validateUser, validateBotExists, async (req,
     savedVoter.lastVotedAt = new Date();
     await savedVoter.save();
 
-    const vote: Vote = { at: new Date(), by: voter.id };
-
-    const savedBot = await bots.get(req.params.id);
-    savedBot.votes.push(vote);
-    savedBot.totalVotes++;
-    savedBot.lastVoteAt = new Date();
-    await savedBot.save();
-
+    const vote = await registerBotVote(req.params.id, voter.id);
     await postVoteWebhook(req.params.id, vote);
 
     apiResponse(res, { message: 'Success!' })   
@@ -93,6 +102,18 @@ router.get('/:id/widget', validateBotExists, async (req, res) => {
     res.set({ 'Content-Type': 'image/png' }).send(image);
   } catch (error) { await sendError(req, res, error); }
 });
+
+async function registerBotVote(botId: string, voterId: string) {
+  const vote: Vote = { at: new Date(), by: voterId };
+
+  const savedBot = await bots.get(botId);
+  savedBot.votes.push(vote);
+  savedBot.totalVotes++;
+  savedBot.lastVoteAt = new Date();
+  await savedBot.save();
+
+  return vote;
+}
 
 async function postVoteWebhook(id: string, vote: Vote) {
   const savedToken = await botTokens.get(id);

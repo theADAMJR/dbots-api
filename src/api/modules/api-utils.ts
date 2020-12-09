@@ -2,6 +2,7 @@ import { UserDocument } from '../../data/models/user';
 import { bot } from '../../bot';
 import { ErrorLogger } from './error-logger';
 import Deps from '../../utils/deps';
+import fetch from 'node-fetch';
 
 const errorLogger = Deps.get<ErrorLogger>(ErrorLogger);
 

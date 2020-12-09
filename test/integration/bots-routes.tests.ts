@@ -58,7 +58,7 @@ describe('/api/routes/bots-routes', () => {
 				.set({ Authorization: key })
 				.expect(200)
 				.expect(res => assert(
-					res.body[0].id === savedBot.id,
+					res.body.saved[0]._id === savedBot.id,
 					'At least one bot user should be sent.'
 				))
 				.end(done);
