@@ -1,14 +1,16 @@
 import { bot } from '../../bot';
 import BotTokens from '../../data/bot-tokens';
 import Bots from '../../data/bots';
-import { SavedBot } from '../../data/models/bot';
+import { BotDocument, SavedBot } from '../../data/models/bot';
 import { SavedBotPack } from '../../data/models/bot-pack';
 import Deps from '../../utils/deps';
 import { APIError, sendError } from './api-utils';
 import { auth } from './auth-client';
+import { PartialUsers } from './partial-users';
 
 const bots = Deps.get<Bots>(Bots);
 const botTokens = Deps.get<BotTokens>(BotTokens);
+const partial = Deps.get<PartialUsers>(PartialUsers);
 
 export async function updateUser(req, res, next) {
   try {
@@ -23,8 +25,7 @@ export async function updateUser(req, res, next) {
 export async function updateManageableBots(req, res, next) {
   try {    
     const savedBots = await bots.getManageable(res.locals.user);
-    res.locals.bots = bot.users.cache
-      .filter(u => savedBots.some(sb => sb.id === u.id));
+    res.locals.bots = await partial.getFromSaved(...savedBots);
     res.locals.savedBots = savedBots;
   
     return next();

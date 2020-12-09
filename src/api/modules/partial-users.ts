@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { bot } from '../../bot';
+import { BotDocument } from '../../data/models/bot';
 import { APIError } from './api-utils';
 
 export class PartialUsers {
@@ -13,9 +14,15 @@ export class PartialUsers {
     
     return {
       ...user,
-      displayAvatarURL: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
+      displayAvatarURL: this.getAvatarURL(user),
       tag: `${user.username}#${user.discriminator}`
     };
+  }
+
+  private getAvatarURL({ id, avatar }: PartialUser) {
+    return (avatar)
+      ? `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp`
+      : `https://cdn.discordapp.com/embed/avatars/0.png`;
   }
 
   private async fetchUser(id: string) {
@@ -30,12 +37,26 @@ export class PartialUsers {
 
     return await discordRes.json();
   }
+
+  async getFromSaved(...savedBots: BotDocument[]) {
+    const partialUsers = [];
+   
+    for (const { id } of savedBots) {
+      const hasValidId = /\d{18}/.test(id);
+      if (!hasValidId) return;
+
+      const user = await this.get(id);
+      partialUsers.push(user);
+    }
+    return partialUsers;
+  }
 }
 
 export interface PartialUser {
   id: string;
   username: string;
-  avatar: string;
+  avatar?: string;
+  bot?: boolean;
   discriminator: string;
   public_flags: number;
   displayAvatarURL: string;

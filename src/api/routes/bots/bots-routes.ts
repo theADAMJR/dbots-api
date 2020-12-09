@@ -43,21 +43,14 @@ router.get('/', async (req, res) => {
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/user', updateUser, validateUser, updateManageableBots,
-  async (req, res) => {
-    const savedBots = res.locals.savedBots;
-    const partialUsers = [];
-   
-    for (const { id } of savedBots) {
-      const hasValidId = /\d{18}/.test(id);
-      if (!hasValidId) return;
-
-      const user = await partial.get(id);
-      partialUsers.push(user);
-    }
-
-    res.json({ partialUsers, saved: savedBots });
-});
+router.get('/user',
+  updateUser, validateUser, updateManageableBots,
+  async (req, res) => 
+    res.json({
+      partialUsers: res.locals.bots,
+      saved: res.locals.savedBots
+    })
+);
 
 router.get('/:id', validateBotExists, async (req, res) => {
   try {
