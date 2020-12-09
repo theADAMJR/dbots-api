@@ -44,6 +44,27 @@ describe('/api/routes/pack-routes', () => {
     });
   });
 
+  describe('GET /packs/:id', () => {
+    it('bot pack does not exist, status 404', (done) => {
+      request(app)
+        .get(`${endpoint}/packs/2318h7j82137h218731g2h3`)
+        .expect(404)
+        .expect({ message: 'Not found.' })
+        .end(done);
+    });
+
+    it('bot pack exists, sends populated bot pack', (done) => {
+      request(app)
+        .get(`${endpoint}/packs/${savedPack.id}`)
+        .expect(200)
+        .expect(res => assert(
+          'owner' in res.body,
+          'Response body should be of type array.')
+        )
+        .end(done);
+    });
+  });
+
   describe('POST /packs', () => {
     it('user not logged in, status 401', (done) => {
       request(app)
@@ -66,17 +87,6 @@ describe('/api/routes/pack-routes', () => {
         .end(done);
     });
     
-    it('pack name contains special characters, status 400', (done) => {
-      savedPack.name = '🤔 this should not work';
-
-      request(app)
-        .post(`${endpoint}/packs`)
-        .set({ Authorization: key })
-        .send(savedPack)
-        .expect(400)
-        .end(done);
-    });
-    
     it('user owns max bot packs, status 400', async () => {
       await SavedBotPack.create(
         { _id: 'bot-pack-124', ownerId: savedPack.owner },
@@ -91,7 +101,8 @@ describe('/api/routes/pack-routes', () => {
         .post(`${endpoint}/packs`)
         .set({ Authorization: key })
         .send(savedPack)
-        .expect(400);
+        .expect(400)
+        .expect({ message: 'Max bot pack limit reached.' });
     });
   });
 

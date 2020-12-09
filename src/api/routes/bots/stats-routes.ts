@@ -35,14 +35,16 @@ router.post('/stats', validateBotExists, validateAPIKey, async (req, res) => {
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/log', updateUser, updateManageableBots, validateBotManager, async(req, res) => {
+router.get('/log', updateUser, validateUser, updateManageableBots, validateBotManager,
+  async(req, res) => {
   try {
     const log = await logs.get(req.params.id);
     res.json(log);
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.get('/key/regen', updateUser, validateUser, updateManageableBots, validateBotManager,
+  async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -53,7 +55,9 @@ router.get('/key/regen', updateUser, updateManageableBots, validateBotManager, a
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/api', updateUser, updateManageableBots, validateBotManager, async (req, res) => {
+router.get('/api',
+  updateUser, updateManageableBots, validateBotManager,
+  async (req, res) => {
   try {
     const savedToken = await botTokens.get(req.params.id);
     res.json(savedToken);
@@ -61,13 +65,13 @@ router.get('/api', updateUser, updateManageableBots, validateBotManager, async (
 });
 
 router.patch('/api',
-  updateUser, validateUser, updateManageableBots, validateBotExists, validateBotManager,
+  updateUser, validateUser, updateManageableBots, validateBotManager,
   async (req, res) => {
   try {
     const savedToken = await botTokens.get(req.params.id);
     savedToken.voteWebhookURL = req.body.voteWebhookURL;
     await savedToken.save();
 
-    res.json({ code: 201, message: 'Success!' });
+    res.json(savedToken);
   } catch (error) { await sendError(req, res, error); }  
 });

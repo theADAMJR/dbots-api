@@ -8,7 +8,7 @@ const errorLogger = Deps.get<ErrorLogger>(ErrorLogger);
 export async function sendError(req: any, res: any, { message, status }: APIError) {
   status ??= 500;
   await errorLogger.api(status, message, req.originalUrl);
-  return res.status(status).json({ code: status, message });
+  return res.status(status).json({ message });
 }
 
 export function apiResponse(res: any, args: DefaultAPIResponse) {

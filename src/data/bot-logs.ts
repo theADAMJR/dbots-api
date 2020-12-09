@@ -1,5 +1,5 @@
 import DBWrapper from './db-wrapper';
-import { Analytic, BotAnalytics, LogDocument, SavedLog } from './models/log';
+import { Analytic, LogDocument, SavedLog } from './models/log';
 
 export default class BotLogs extends DBWrapper<string, LogDocument> {
   protected async getOrCreate(id: string) {

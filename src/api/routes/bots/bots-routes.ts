@@ -10,13 +10,11 @@ import BotTokens from '../../../data/bot-tokens';
 import fetch from 'node-fetch';
 import { updateManageableBots, updateUser, validateBotExists, validateUser } from '../../modules/middleware';
 import { getWeek } from '../../../utils/command-utils';
-import { PartialUsers } from '../../modules/partial-users';
 
 export const router = Router();
 
 const bots = Deps.get<Bots>(Bots);
 const botTokens = Deps.get<BotTokens>(BotTokens);
-const partial = Deps.get<PartialUsers>(PartialUsers);
 const users = Deps.get<Users>(Users);
 
 router.get('/', async (req, res) => {
@@ -81,7 +79,7 @@ router.get('/:id/vote',
     const vote = await registerBotVote(req.params.id, voter.id);
     await postVoteWebhook(req.params.id, vote);
 
-    apiResponse(res, { message: 'Success!' })   
+    res.json(vote);
   } catch (error) { await sendError(req, res, error); }
 });
 

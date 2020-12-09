@@ -38,3 +38,11 @@ router.get('/:id/partial', async (req, res) => {
     res.json(user);
   } catch (error) { await sendError(req, res, error); }
 });
+
+router.get('/:id/saved', async (req, res) => {
+  try {
+    const partialUser = await partial.get(req.params.id);
+    const user = await users.get(partialUser);
+    res.json(user);
+  } catch (error) { await sendError(req, res, error); }
+});

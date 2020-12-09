@@ -1,5 +1,6 @@
 import { SavedUser, UserDocument } from './models/user';
 import DBWrapper from './db-wrapper';
+import { PartialUser } from '../api/modules/partial-users';
 
 export default class Users extends DBWrapper<PartialUser, UserDocument> {
   protected async getOrCreate(user: PartialUser) {
@@ -19,5 +20,3 @@ export default class Users extends DBWrapper<PartialUser, UserDocument> {
     return new SavedUser({ _id: user.id }).save();
   }
 }
-
-export interface PartialUser { id: string, bot: boolean };

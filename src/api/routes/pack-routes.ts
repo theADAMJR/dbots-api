@@ -30,20 +30,16 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', updateUser, validateUser, async (req, res) => {
   try {
-    const nameValid = /^([A-Za-z\d -])+$/g.test(req.body.name);
-    if (!nameValid)
-      throw new APIError('Pack name should not contain special characters.')
-
     let _id = req.body.name
       .toLowerCase()
-      .replace(/ /g, '-');
+      .replace(/[!@#\$%\^\&*\)\(+=._ ]/g, '-');
     const nameExists = await SavedBotPack.exists({ _id });
-    if (nameExists) {
+    if (nameExists)
       _id += '-' + Math
         .floor(Math.random() * 999999)
         .toString()
         .padStart(6, '0');
-    }
+
 
     const ownerPacks = await SavedBotPack.count({ owner: res.locals.user.id });
     if (ownerPacks >= 5)
@@ -79,7 +75,7 @@ router.delete('/:id',
   async (req, res) => {
   try {
     await SavedBotPack.deleteOne({ _id: req.params.id });
-    res.json({ code: 200, message: 'Success!' });
+    res.json({ message: 'Success' });
   } catch (error) { await sendError(req, res, error); }
 });
 
@@ -97,6 +93,6 @@ router.get('/:id/vote',
     pack.votes++;
     await pack.save();
 
-    res.status(200).json(pack);
+    res.json(pack);
   } catch (error) { await sendError(req, res, error); }
 });

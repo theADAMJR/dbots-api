@@ -38,8 +38,10 @@ describe('/api/routes/bots-routes', () => {
 			request(app)
 				.get(`${endpoint}/bots`)
 				.expect(200)
-				.expect(res => assert(res.body.saved.length === 1))
-				.expect(res => assert(res.body.users.length === 1))
+				.expect(res => assert(
+					res.body.saved.length === 1 && res.body.users.length === 1,
+					'API bots should be returned.'
+				))
 				.end(done);
 		});
 	});

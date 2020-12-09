@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { bot } from '../../../bot';
 import Deps from '../../../utils/deps';
 import Bots from '../../../data/bots';
 import BotLogs from '../../../data/bot-logs';
@@ -8,7 +7,6 @@ import AuditLogger from '../../modules/audit-logger';
 import { addDevRole, APIError, apiResponse, kickMember, sendError } from '../../modules/api-utils';
 import { updateManageableBots, updateUser, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import { ChannelLog } from '../../modules/channel-log';
-import BotTokens from '../../../data/bot-tokens';
 import { PartialUsers } from '../../modules/partial-users';
 
 export const router = Router();

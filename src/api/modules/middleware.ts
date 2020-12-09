@@ -38,7 +38,7 @@ export async function validateBotManager(req, res, next) {
   try {  
     const botManageable = res.locals.bots.some(b => b.id === req.params.id);
     if (!botManageable)
-      throw new APIError('Bot not manageable.');
+      throw new APIError('Bot not manageable');
   
     return next();
   } catch (error) { await sendError(req, res, error); }
@@ -48,11 +48,11 @@ export async function validatePackOwner(req, res, next) {
   try {
     const key = req.get('Authorization');
     if (!key)
-      throw new APIError('Unauthorized.', 401);
+      throw new APIError('Unauthorized', 401);
   
     const botFound = res.locals.bots.some(b => b.id === req.params.id)
     if (!botFound)
-      throw new APIError('Bot not manageable.');
+      throw new APIError('Bot not manageable');
   
     return next();
   } catch (error) { await sendError(req, res, error); }
@@ -61,51 +61,51 @@ export async function validatePackOwner(req, res, next) {
 export async function validateUser(req, res, next) {
   return (res.locals.user)
     ? next()
-    : await sendError(req, res, new APIError('Unauthorized.', 401));
+    : await sendError(req, res, new APIError('Unauthorized', 401));
 }
 
 export async function validateCanCreate(req, res, next) {
   const exists = await bots.exists(req.body.botId);
   if (exists)
-    return await sendError(req, res, new APIError('Bot already exists.', 400));
+    return await sendError(req, res, new APIError('Bot already exists'));
 
   const member = bot.guilds.cache
     .get(process.env.GUILD_ID)?.members.cache
     .get(res.locals.user.id);
   try {
     await member.guild.fetchBan(member.user);
-    return await sendError(req, res, new APIError('You are banned from the guild.', 403))
+    return await sendError(req, res, new APIError('You are banned from the guild', 403))
   } catch {}
 
   return (member)
     ? next()
-    : await sendError(req, res, new APIError('You must be in the DBots Discord Server to post bots.', 401)); 
+    : await sendError(req, res, new APIError('You must be in the DBots Discord Server to post bots', 401)); 
 }
 
 export async function validateBotExistsFromBody(req, res, next) {
   const exists = await bots.exists(req.body.botId);
   return (exists)
     ? next()
-    : await sendError(req, res, new APIError('Bot does not exist.', 404));
+    : await sendError(req, res, new APIError('Not found.', 404));
 }
 
 export async function validatePackExists(req, res, next) {
   const exists = await SavedBotPack.exists({ _id: req.params.id });
   return (exists)
     ? next()
-    : await sendError(req, res, new APIError('Bot pack does not exist.', 404));
+    : await sendError(req, res, new APIError('Not found', 404));
 }
 
 export async function validateBotExists(req, res, next) {
   const exists = await SavedBot.exists({ _id: req.params.id });
   return (exists)
     ? next()
-    : await sendError(req, res, new APIError('Bot does not exist.', 404));
+    : await sendError(req, res, new APIError('Not found', 404));
 }
 
 export async function validateAPIKey(req, res, next) {
   const savedToken = await botTokens.get(req.params.id);
   return (savedToken.token === req.get('Authorization'))
     ? next()
-    : await sendError(req, res, new APIError('Invalid API token.', 401));
+    : await sendError(req, res, new APIError('Unauthorized', 401));
 }
