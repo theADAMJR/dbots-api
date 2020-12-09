@@ -9,6 +9,7 @@ import { addDevRole, APIError, apiResponse, kickMember, sendError } from '../../
 import { updateManageableBots, updateUser, validateBotManager, validateCanCreate, validateUser } from '../../modules/middleware';
 import { ChannelLog } from '../../modules/channel-log';
 import BotTokens from '../../../data/bot-tokens';
+import { PartialUsers } from '../../modules/partial-users';
 
 export const router = Router();
 
@@ -16,7 +17,7 @@ const auditLogger = Deps.get<AuditLogger>(AuditLogger);
 const bots = Deps.get<Bots>(Bots);
 const channelLog = Deps.get<ChannelLog>(ChannelLog);
 const logs = Deps.get<BotLogs>(BotLogs);
-const tokens = Deps.get<BotTokens>(BotTokens);
+const partial = Deps.get<PartialUsers>(PartialUsers);
 
 router.post('/',
   updateUser, validateUser, validateCanCreate,
@@ -24,7 +25,7 @@ router.post('/',
   try {
     const listing: Listing = req.body;
 
-    const user = bot.users.cache.get(listing.botId);
+    const user = await partial.get(req.params.id);
     if (user && !user.bot)
       throw new APIError('Cannot add a non-bot user.');
 
