@@ -14,7 +14,7 @@ router.get('/auth', async (req, res) => {
   try {
     const code = req.query.code?.toString();
     if (!code)
-      throw new APIError('No code provided.');
+      throw new APIError(401);
     
     const key = await auth.getAccess(code);
     res.redirect(`${process.env.DASHBOARD_URL}/auth?key=${key}`);
@@ -32,4 +32,4 @@ router.post('/error', async (req, res) => {
 router.get('/login', (req, res) =>
   res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.API_URL}/auth&response_type=code&scope=identify guilds&prompt=none`));
 
-router.all('*', async (req, res) => await sendError(req, res, new APIError('Not found.', 404)));
+router.all('*', async (req, res) => await sendError(req, res, new APIError(404)));

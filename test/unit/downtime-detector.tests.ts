@@ -3,7 +3,7 @@ import { bot } from '../../src/bot';
 import { SavedBot } from '../../src/data/models/bot';
 import { DowntimeDetector } from '../../src/modules/downtime-detector';
 
-describe('/modules/uptime-detector', () => {
+describe.skip('/modules/uptime-detector', () => {
   let botUser: any;
   let detector: DowntimeDetector;
 

@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
   try {
     const user = bot.users.cache.get(req.params.id);
     if (!user)
-      throw new APIError('User not found.', 404);
+      throw new APIError(404);
 
     res.json({
       ...user,
@@ -35,7 +35,9 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/partial', async (req, res) => {
   try {
     const user = await partial.get(req.params.id);
-    res.json(user);
+    return (user)
+      ? res.json(user)
+      : sendError(req, res, new APIError(404));
   } catch (error) { await sendError(req, res, error); }
 });
 

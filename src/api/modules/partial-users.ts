@@ -8,6 +8,7 @@ export class PartialUsers {
 
   async get(id: string): Promise<PartialUser> {
     const user = this.cache.get(id) ?? await this.fetchUser(id);
+    if (!user || !user.message) return null;
 
     this.cache.set(id, user);
     setTimeout(() => this.cache.delete(id), 60 * 60 * 1000);
@@ -31,9 +32,9 @@ export class PartialUsers {
     });
 
     if (discordRes.status === 429)
-      throw new APIError('You are being rate limited by Discord.', 429);
+      throw new APIError(429);
     else if (discordRes.status === 404)
-      throw new APIError('User does not exist.', 404);
+      throw new APIError(404);
 
     return await discordRes.json();
   }

@@ -23,13 +23,13 @@ const user = {
 
 auth.getAccess = async (code: string) => {
   if (!code)
-    throw new APIError('Code required.', 400);
+    throw new APIError(400);
 
   return 'password_123';
 };
 auth.getUser = async (key: string) => {
   if (!key)
-    throw new APIError('Key required.', 400);
+    throw new APIError(400);
 
   return user;
 };

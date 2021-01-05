@@ -24,7 +24,7 @@ export function validateIfCanVote(savedVoter: UserDocument) {
   if (savedVoter.lastVotedAt > oneDayAgo) {
     const timeLeftMs = new Date(savedVoter.lastVotedAt.getTime() + twelveHoursMs).getTime() - Date.now();
     const hoursLeft = (timeLeftMs / 1000 / 60 / 60);
-    throw new APIError(`You have already voted. You can next vote in ${hoursLeft.toFixed(2)} hours.`, 429);
+    throw new APIError(429);
   }
 }
 
@@ -45,10 +45,17 @@ export async function kickMember(id: string) {
 }
 
 export class APIError extends Error {
-  constructor(
-    message: string,
-    public readonly status = 400) {
-    super(message);
+  private static readonly messages = new Map<number, string>([
+    [400, 'Bad request'],
+    [401, 'Unauthorized'],
+    [403, 'Forbidden'],
+    [404, 'Not found'],
+    [429, 'You are being rate limited'],
+    [500, 'Internal server error'],
+  ])
+
+  constructor(public readonly status = 400) {
+    super(APIError.messages.get(status));
   }
 }
 
