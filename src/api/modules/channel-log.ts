@@ -45,7 +45,7 @@ export class ChannelLog {
       await (bot.guilds.cache
         .get(process.env.GUILD_ID)?.channels.cache
         .get(process.env.LOG_CHANNEL_ID) as TextChannel)
-        ?.send(new MessageEmbed({ color: hexColor, description, title }));
+        ?.send(`>>> **${title}**\n${description} `);
     } catch {}
   }
 }
