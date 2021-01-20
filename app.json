@@ -10,23 +10,23 @@
   "env": {
     "API_URL": {
       "description": "Same as DASHBOARD_URL, but with /api/v1 at the end.",
-      "value": "https://<heroku_app_name>/herokuapp.com/api/v1"
+      "value": "https://<heroku_app_name>.herokuapp.com/api/v1"
     },
     "BOT_ID": {
       "description": "Bot ID from https://discord.com/developers.",    
-      "value": ""
-    },
-    "BOT_SECRET": {
-      "description": "Bot Secret from https://discord.com/developers.",    
       "value": ""
     },
     "BOT_TOKEN": {
       "description": "Bot Token from https://discord.com/developers.",    
       "value": ""
     },
+    "CLIENT_SECRET": {
+      "description": "Client Secret from https://discord.com/developers.",    
+      "value": ""
+    },
     "DASHBOARD_URL": {
-      "description": "The Website URL [https://<heroku_app_name>/herokuapp.com]",    
-      "value": "https://<heroku_app_name>/herokuapp.com"
+      "description": "The Website URL",    
+      "value": "https://<heroku_app_name>.herokuapp.com"
     },
     "GUILD_ID": {
       "description": "ID of the guild for the bot list.",    

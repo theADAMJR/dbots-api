@@ -16,10 +16,10 @@ describe('/api/routes/api-routes', () => {
   });
 
   describe('GET /auth', () => {
-    it('no code, status 400', (done) => {
+    it('no code, status 401', (done) => {
       request(app)
         .get(`${endpoint}/auth`)
-        .expect(400)
+        .expect(401)
         .end(done);
     });
 
@@ -46,14 +46,12 @@ describe('/api/routes/api-routes', () => {
         request(app)
         .get(`${endpoint}/u41u48312h31823`)
         .expect(404)
-        .expect({ code: 404, message: 'Not found.' })
         .end(done);
     });
     it('POST non existing API url, returns 404', (done) => {
         request(app)
         .post(`${endpoint}/u41u48312h31823`)
         .expect(404)
-        .expect({ code: 404, message: 'Not found.' })
         .end(done);
     });
   });

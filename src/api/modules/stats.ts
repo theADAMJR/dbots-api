@@ -1,7 +1,7 @@
 import { BotDocument } from '../../data/models/bot';
 
 export default class Stats {
-  general(savedBot: BotDocument): GeneralStats {    
+  general(savedBot: BotDocument): GeneralStats {
     return {
       approvedAt: savedBot.approvedAt,
       guildCount: savedBot.stats?.guildCount,

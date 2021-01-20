@@ -4,9 +4,6 @@ import { getWeek } from '../utils/command-utils';
 
 export default class Bots extends DBWrapper<string, BotDocument> {
   protected async getOrCreate(id: string) {
-    const isSnowflake = /\d{18}/.test(id);
-    if (!isSnowflake) return null;
-
     const savedBot = await SavedBot.findById(id)
       ?? await this.create(id);
 

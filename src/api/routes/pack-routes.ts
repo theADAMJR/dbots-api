@@ -40,9 +40,9 @@ router.post('/', updateUser, validateUser, async (req, res) => {
         .toString()
         .padStart(6, '0');
 
-
-    const ownerPacks = await SavedBotPack.count({ owner: res.locals.user.id });
-    if (ownerPacks >= 5)
+    const ownerPacksCount = await SavedBotPack
+      .countDocuments({ owner: res.locals.user.id });    
+    if (ownerPacksCount >= 5)
       throw new APIError(400);
 
     const pack = await SavedBotPack.create({

@@ -39,16 +39,26 @@ auth.getUser = async (key: string) => {
 
 bot.users.cache = new Collection([
   [
-    'bot_user_123', {
+    process.env.CLIENT_ID, {
       avatar: '2j94321yu7392173y128731',
-      id: 'bot_user_123',
+      id: process.env.CLIENT_ID,
       username: '4PG',
+      bot: true,
+      discriminator: '0001',
+      displayAvatarURL: (...args) => 'https://2pg.xyz/assets/img/2pg-avatar-transparent.png'
+    } as any,
+  ],
+  [
+    'bot_user_321', {
+      avatar: '2j94321yu7392173y128731',
+      id: 'bot_user_321',
+      username: '5PG',
       bot: true,
       discriminator: '0001',
       displayAvatarURL: (...args) => 'https://2pg.xyz/assets/img/2pg-avatar-transparent.png'
     } as any
   ],
-  [ 'test_user_123', user ]
+  [ 'test_user_123', user ],
 ]);
 
 (Deps.get<PartialUsers>(PartialUsers) as any)
@@ -60,7 +70,10 @@ bot.guilds.cache = new Collection([
       id: 'test_guild_123',
       name: '4PG Test Server',
       members: {
-        cache: new Collection([[ 'test_user_123', user ]])
+        cache: new Collection(bot.users.cache.entries() as any)
+      },
+      fetchBan: (...args) => {
+        throw new TypeError('Member is not banned');
       }
     } as any
   ]

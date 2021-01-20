@@ -17,8 +17,8 @@ describe('/api/routes/pack-routes', () => {
     await SavedUser.deleteMany({});
 
     savedPack = new SavedBotPack();
-    savedPack._id = 'bot-pack-123';
-    savedPack.name = 'bot-pack-123';
+    savedPack._id = 'bot_pack_123';
+    savedPack.name = 'bot_pack_123';
     savedPack.owner = 'test_user_123' as any;
     await savedPack.save();
 
@@ -49,7 +49,6 @@ describe('/api/routes/pack-routes', () => {
       request(app)
         .get(`${endpoint}/packs/2318h7j82137h218731g2h3`)
         .expect(404)
-        .expect({ message: 'Not found.' })
         .end(done);
     });
 
@@ -74,14 +73,14 @@ describe('/api/routes/pack-routes', () => {
         .end(done);
     });
 
-    it('duplicate id pack is created, name is changed', (done) => {
+    it('duplicate id pack is created, numbers are appended', (done) => {
       request(app)
         .post(`${endpoint}/packs`)
         .set({ Authorization: key })
         .send(savedPack)
         .expect(201)
         .expect(res => assert(
-          res.body._id.startsWith(savedPack._id),
+          res.body._id !== savedPack._id,
           'Pack name should be unique.'
         ))
         .end(done);
@@ -89,10 +88,10 @@ describe('/api/routes/pack-routes', () => {
     
     it('user owns max bot packs, status 400', async () => {
       await SavedBotPack.create(
-        { _id: 'bot-pack-124', ownerId: savedPack.owner },
-        { _id: 'bot-pack-125', ownerId: savedPack.owner },
-        { _id: 'bot-pack-126', ownerId: savedPack.owner },
-        { _id: 'bot-pack-127', ownerId: savedPack.owner },
+        { _id: 'bot_pack_124', owner: savedPack.owner },
+        { _id: 'bot_pack_125', owner: savedPack.owner },
+        { _id: 'bot_pack_126', owner: savedPack.owner },
+        { _id: 'bot_pack_127', owner: savedPack.owner },
       );
 
       savedPack.name = '🤔 this should not work';
@@ -101,8 +100,7 @@ describe('/api/routes/pack-routes', () => {
         .post(`${endpoint}/packs`)
         .set({ Authorization: key })
         .send(savedPack)
-        .expect(400)
-        .expect({ message: 'Max bot pack limit reached.' });
+        .expect(400);
     });
   });
 

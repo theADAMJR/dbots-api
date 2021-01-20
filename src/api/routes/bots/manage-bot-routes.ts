@@ -23,8 +23,8 @@ router.post('/',
   try {
     const listing: Listing = req.body;
 
-    const user = await partial.get(req.params.id);
-    if (user && !user.bot)
+    const user = await partial.get(req.body.botId);
+    if (!user || user && !user.bot)
       throw new APIError(400);
 
     const savedBot = await SavedBot.create({

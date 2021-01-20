@@ -17,7 +17,7 @@ describe('/api/routes/bots-routes', () => {
 		await SavedUser.deleteMany({});
 
 		savedBot = await SavedBot.create({
-			_id: 'bot_user_123',
+			_id: process.env.CLIENT_ID,
 			lastVoteAt: new Date(),
 			ownerId: 'test_user_123',
 			votes: [],
@@ -103,12 +103,11 @@ describe('/api/routes/bots-routes', () => {
 				.end(done);
 		});
 
-		it('user votes, status 200', async () => {
+		it('user votes, status 200, votes increased by 1', async () => {
 			await request(app)
 				.get(`${endpoint}/bots/${savedBot.id}/vote`)
 				.set({ Authorization: key })
-				.expect(200)
-				.expect({ code: 200, message: 'Success!' });
+				.expect(200);
 
 			const newSavedBot = await SavedBot.findById(savedBot.id);
 

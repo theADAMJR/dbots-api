@@ -14,7 +14,7 @@ describe('/src/api/routes/bots/stats-routes', () => {
 
   before(async() => {
     savedBot = await SavedBot.create({
-      _id: 'bot_user_123',
+      _id: process.env.CLIENT_ID,
       approvedAt: new Date(),
       createdAt: new Date(),
       ownerId: 'test_user_123',
@@ -34,7 +34,7 @@ describe('/src/api/routes/bots/stats-routes', () => {
   });
 
   describe('GET /stats', () => {
-    it('sends bot stats, status 200', (done) => {
+    it('sends bot stats, status 200', (done) => {      
       request(app)
         .get(`${endpoint}/bots/${savedBot.id}/stats`)
         .expect(200)
@@ -122,11 +122,11 @@ describe('/src/api/routes/bots/stats-routes', () => {
         .end(done);
     });
 
-    it('bot not found, status 404', (done) => {
+    it('bot not found, status 403', (done) => {
       request(app)
         .patch(`${endpoint}/bots/123012u38123u218392183/api`)
         .set({ Authorization: key })
-        .expect(404)
+        .expect(403)
         .end(done);
     });
 

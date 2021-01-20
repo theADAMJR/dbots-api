@@ -50,9 +50,6 @@ export class PartialUsers {
     const partialUsers = [];
    
     for (const { id } of savedBots) {
-      const isSnowflake = /\d{18}/.test(id);
-      if (!isSnowflake) return;
-
       const user = await this.get(id);
       partialUsers.push(user);
     }

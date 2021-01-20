@@ -38,7 +38,7 @@ export async function validateBotManager(req, res, next) {
   try {
     const botManageable = res.locals.bots?.some(b => b.id === req.params.id);
     if (!botManageable)
-      throw new APIError(401);
+      throw new APIError(403);
   
     return next();
   } catch (error) { await sendError(req, res, error); }
@@ -52,7 +52,7 @@ export async function validatePackOwner(req, res, next) {
   
     const botFound = res.locals.bots.some(b => b.id === req.params.id);
     if (!botFound)
-      throw new APIError(401);
+      throw new APIError(403);
   
     return next();
   } catch (error) { await sendError(req, res, error); }
@@ -97,7 +97,7 @@ export async function validatePackExists(req, res, next) {
 }
 
 export async function validateBotExists(req, res, next) {
-  const exists = await SavedBot.exists({ _id: req.params.id });
+  const exists = await SavedBot.exists({ _id: req.params.id });  
   return (exists)
     ? next()
     : await sendError(req, res, new APIError(404));

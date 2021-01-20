@@ -12,7 +12,7 @@ describe('/api/modules/stats', () => {
 
   beforeEach(async() => {
     savedBot = new SavedBot({
-      _id: 'bot_user_123',
+      _id: process.env.CLIENT_ID,
       approvedAt: new Date(),
       stats: {
         guildCount: 0

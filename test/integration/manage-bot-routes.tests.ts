@@ -12,7 +12,7 @@ describe('/api/routes/bots/manage-bot-routes', () => {
   let savedUser: UserDocument;
 
   const key = 'password_123';
-	const botId = 'bot_user_123';
+	const botId = process.env.CLIENT_ID;
 	const endpoint = '/api/v1';
 
   beforeEach(async () => {
@@ -79,11 +79,11 @@ describe('/api/routes/bots/manage-bot-routes', () => {
         .end(done);
     });
 
-    it('bot not manageable, status 400', (done) => {
+    it('bot not manageable, status 403', (done) => {
       request(app)
         .patch(`${endpoint}/bots/23u981ji973yg1381t623871t237183`)
         .set({ Authorization: key })
-        .expect(400)
+        .expect(403)
         .end(done);
     });
 
@@ -110,11 +110,11 @@ describe('/api/routes/bots/manage-bot-routes', () => {
         .end(done);
     });
 
-    it('bot not manageable, status 400', (done) => {
+    it('bot not manageable, status 403', (done) => {
       request(app)
         .delete(`${endpoint}/bots/2j3u8183yh1283gh7128371`)
         .set({ Authorization: key })
-        .expect(400)
+        .expect(403)
         .end(done);
     });
 

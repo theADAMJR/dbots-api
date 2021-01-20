@@ -7,7 +7,7 @@ describe('/data/bot-logs', () => {
   let savedLog: LogDocument;
 
   beforeEach(() => {
-    savedLog = new SavedLog({ _id: 'bot_user_123' });
+    savedLog = new SavedLog({ _id: process.env.CLIENT_ID });
     savedLog.updateOne = (...args: any): any => {};
     savedLog.analytics = new BotAnalytics();
 

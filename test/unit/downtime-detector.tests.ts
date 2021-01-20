@@ -8,16 +8,16 @@ describe.skip('/modules/uptime-detector', () => {
   let detector: DowntimeDetector;
 
   beforeEach(() => {
-    SavedBot.find = (): any => [{ id: 'bot_user_123' }];
+    SavedBot.find = (): any => [{ id: process.env.CLIENT_ID }];
 
     botUser = {
-      id: 'bot_user_123',
+      id: process.env.CLIENT_ID,
       presence: {
         status: 'online'
       } 
     };
 
-    bot.users.cache.set('bot_user_123', botUser);
+    bot.users.cache.set(process.env.CLIENT_ID, botUser);
     bot.channels.cache.set(process.env.DOWNTIME_CHANNEL_ID, {
       id: process.env.DOWNTIME_CHANNEL_ID,
       send: () => true,
@@ -36,19 +36,19 @@ describe.skip('/modules/uptime-detector', () => {
   it('bot is online, ignored', async () => {
     await detector.checkBots();
 
-    const downtime = detector.log.get('bot_user_123');
+    const downtime = detector.log.get(process.env.CLIENT_ID);
     expect(downtime).to.be.undefined;
   });
 
   it('bot is offline for 15 mins, log is sent', async () => {
     botUser.presence.status = 'offline';
-    detector.log.set('bot_user_123', {
+    detector.log.set(process.env.CLIENT_ID, {
       logged: false,
       since: new Date(0)
     });
     await detector.checkBots();
 
-    const log = detector.log.get('bot_user_123');    
+    const log = detector.log.get(process.env.CLIENT_ID);    
 
     expect(log.logged).to.be.true;
   });
