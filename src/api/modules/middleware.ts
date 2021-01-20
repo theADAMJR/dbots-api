@@ -35,8 +35,8 @@ export async function updateManageableBots(req, res, next) {
 }
 
 export async function validateBotManager(req, res, next) {
-  try {  
-    const botManageable = res.locals.bots.some(b => b.id === req.params.id);
+  try {
+    const botManageable = res.locals.bots?.some(b => b.id === req.params.id);
     if (!botManageable)
       throw new APIError(401);
   

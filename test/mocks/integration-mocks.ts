@@ -5,6 +5,7 @@ import { ErrorLogger } from '../../src/api/modules/error-logger';
 import { bot } from '../../src/bot';
 import Deps from '../../src/utils/deps';
 import rateLimit from '../../src/api/modules/rate-limiter';
+import { PartialUsers } from '../../src/api/modules/partial-users';
 
 // comment to log test API errors
 (Deps.get(ErrorLogger) as any).api = () => {};
@@ -12,9 +13,11 @@ import rateLimit from '../../src/api/modules/rate-limiter';
 (rateLimit as any).skip = () => true;
 
 const user = {
+  avatar: '2j94321yu7392173y128731',
   id: 'test_user_123',
   username: 'ADAMJR',
   bot: false,
+  discriminator: '0001',
   displayAvatarURL: (...args) => 'https://cdn.discordapp.com/avatars/218459216145285121/a_6c1a5048eb777267175e29735cc729bc.webp',
   presence: {
     status: 'online'
@@ -37,14 +40,19 @@ auth.getUser = async (key: string) => {
 bot.users.cache = new Collection([
   [
     'bot_user_123', {
+      avatar: '2j94321yu7392173y128731',
       id: 'bot_user_123',
       username: '4PG',
       bot: true,
+      discriminator: '0001',
       displayAvatarURL: (...args) => 'https://2pg.xyz/assets/img/2pg-avatar-transparent.png'
     } as any
   ],
   [ 'test_user_123', user ]
 ]);
+
+(Deps.get<PartialUsers>(PartialUsers) as any)
+  .get = async (id: string) => bot.users.cache.get(id);
 
 bot.guilds.cache = new Collection([
   [

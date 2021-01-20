@@ -7,7 +7,7 @@ import { SavedLog } from '../../src/data/models/log';
 import { SavedUser, UserDocument } from '../../src/data/models/user';
 import '../mocks/integration-mocks';
 
-describe('routes/api/bots/manage-bot-routes', () => {
+describe('/api/routes/bots/manage-bot-routes', () => {
   let savedBot: BotDocument;
   let savedUser: UserDocument;
 

@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
   } catch (error) { await sendError(req, res, error); }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', validatePackExists, async (req, res) => {
   try {
     const pack = await SavedBotPack
       .findById(req.params.id)

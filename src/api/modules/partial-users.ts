@@ -7,8 +7,15 @@ export class PartialUsers {
   readonly cache = new Map<string, PartialUser>();
 
   async get(id: string): Promise<PartialUser> {
-    const user = this.cache.get(id) ?? await this.fetchUser(id);
-    if (!user || !user.message) return null;
+    const isSnowflake = /\d{18}/.test(id);
+    if (!isSnowflake) return null;
+
+    const user = this.cache.get(id) ?? await this.fetchUser(id);    
+    if (!user) return null;
+    if (user.message?.includes('401'))
+      throw new APIError(500);
+    else if (user.message?.includes('404'))
+      throw new APIError(404);
 
     this.cache.set(id, user);
     setTimeout(() => this.cache.delete(id), 60 * 60 * 1000);
@@ -43,8 +50,8 @@ export class PartialUsers {
     const partialUsers = [];
    
     for (const { id } of savedBots) {
-      const hasValidId = /\d{18}/.test(id);
-      if (!hasValidId) return;
+      const isSnowflake = /\d{18}/.test(id);
+      if (!isSnowflake) return;
 
       const user = await this.get(id);
       partialUsers.push(user);
