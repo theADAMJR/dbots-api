@@ -1,10 +1,15 @@
 import fs from 'fs';
 import { promisify } from 'util';
 import { resolve } from 'path';
+import shell from 'shelljs';
 
 const appendFile = promisify(fs.appendFile);
 
 export class ErrorLogger {
+  constructor() {
+    shell.mkdir('-p', 'logs/dashboard', 'logs/api');
+  }
+
   private logsPath = resolve('./logs');
   private sessionDate = new Date()
     .toISOString()
