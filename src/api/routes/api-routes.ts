@@ -29,7 +29,6 @@ router.post('/error', async (req, res) => {
   }
 });
 
-router.get('/login', (req, res) =>
-  res.redirect(`https://discordapp.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.API_URL}/auth&response_type=code&scope=identify guilds&prompt=none`));
+router.get('/login', (req, res) => res.redirect(auth.authCodeLink.url));
 
 router.all('*', async (req, res) => await sendError(req, res, new APIError(404)));
