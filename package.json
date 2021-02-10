@@ -17,7 +17,7 @@
   "author": "ADAMJR#0001",
   "license": "ISC",
   "dependencies": {
-    "@2pg/oauth": "^1.0.6",
+    "@2pg/oauth": "^1.0.8",
     "@types/express": "^4.17.6",
     "@types/express-rate-limit": "^5.1.0",
     "@types/mongoose": "^5.7.3",

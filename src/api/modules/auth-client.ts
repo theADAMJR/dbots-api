@@ -1,6 +1,6 @@
-import OAuthClient from '@2pg/oauth';
+import { Client } from '@2pg/oauth';
 
-export const auth = new OAuthClient({
+export const auth = new Client({
   id: process.env.CLIENT_ID,
   secret: process.env.CLIENT_SECRET,
   redirectURI: `${process.env.API_URL}/auth`,
