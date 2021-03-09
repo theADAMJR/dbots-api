@@ -17,4 +17,4 @@ Quickly and easily find Discord bots. Comes with prebuilt website; just uncommen
 ---
 
 ## Setup
-https://help.codea.live/projects/dbots
+https://help.codea.live/projects/dbots/setup
