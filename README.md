@@ -1,5 +1,5 @@
 # DBots - API
-Quickly and easily find Discord bots. Comes with prebuilt website; just uncomment lines in [api/server.ts](tree/stable/src/api/server.ts) to get this to work.
+Quickly and easily find Discord bots. Comes with prebuilt website; just uncomment lines in [api/server.ts](src/api/server.ts) to get this to work.
 
 ![Discord](https://img.shields.io/discord/236608364333891585?color=6ca294&amp;label=Support&amp;style=for-the-badge)
 ![Lines of Code](https://img.shields.io/tokei/lines/github/DBots-co/API?color=6ca294&style=for-the-badge)
